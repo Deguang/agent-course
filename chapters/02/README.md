@@ -72,7 +72,7 @@ npm run test:02   # 4 个测试:出站映射 / 入站(final) / 入站(tool-calls
 - **本地免费**:装 [Ollama](https://ollama.com/) 跑个开源模型,用 OpenAI 兼容端点接入——零成本、最 provider 中立。
 - **BYOK**:填你自己的 key,换成任意 provider。
 
-> ⚠️ 真实 SDK 的确切调用(函数名/参数)请**现查官方文档**再写(见 `CONTENT.md`:API 现查实跑、不凭记忆)。tutor 会陪你把真 transport 接通并**实跑验证**。
+> ⚠️ 真实 SDK 的确切调用(函数名/参数)请**现查官方文档**再写(见 `AGENT.md`:API 现查实跑、不凭记忆)。tutor 会陪你把真 transport 接通并**实跑验证**。
 
 这一节做完,你就亲手走完了 **raw → harness → (Day 1 的)loop**:同一个 loop,换假模型、换 Ollama、换云端 provider,核心都不用改。
 
