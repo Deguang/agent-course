@@ -2,7 +2,19 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { type HistoryEntry, type Model, runAgent, type Step, type ToolRegistry } from "./agent.ts";
 
-// 确定性"脚本模型":不联网、不要 key。按预设序列一步步返回,并记录被调用次数。
+// ─────────────────────────────────────────────────────────────────────────
+// scriptedModel = 一个"假模型"(测试替身 / stub)。读测试前先看懂它:
+//
+//   · 它没有任何智能、没有推理。每次 step() 被调用,只是从 `script` 这个
+//     预先写好的数组里,按顺序吐出下一个 Step —— 就像照着台词本念,念到哪算哪。
+//   · 所以"为什么模型会返回 final"?不是它想通了,而是**测试作者**在 script
+//     末尾放了个 { kind: "final" }。每个测试自己决定这个假模型会怎么走。
+//   · 为什么用假模型?为了**确定性**:不联网、不要 API key、每次结果都一样。
+//     这样测试考的是**你的 loop 写对没有**,而不是真实模型聪不聪明。
+//   · 它还顺便记 `calls`(step 被调了几次),好让测试断言"loop 问了几轮模型"。
+//
+// (真实模型怎么接进来,是后面章节的事;Ch01 只用这个替身来锁定 loop 的行为。)
+// ─────────────────────────────────────────────────────────────────────────
 function scriptedModel(script: Step[]): Model & { calls: number } {
   let i = 0;
   const m = {
@@ -11,6 +23,7 @@ function scriptedModel(script: Step[]): Model & { calls: number } {
       m.calls++;
       const next = script[i++];
       if (next === undefined) {
+        // 脚本念完了却还被调 —— 说明你的 loop 多问了一轮模型(该停没停)。
         throw new Error("脚本已耗尽:loop 比预期多调了一次模型");
       }
       return next;
