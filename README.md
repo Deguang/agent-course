@@ -1,4 +1,4 @@
-# 动手学 Agent(provider 中立 · TS)
+# 两周成为 Agent 专家(provider 中立 · TS)
 
 > AI 已经能替你把代码写完。真正稀缺的,是**判断它对不对**的能力——
 > 而你只判断得了自己也能做出来的东西。
@@ -7,7 +7,9 @@
 一门为**习得**设计的 provider 中立 agent 应用课程 —— 目标是"会 + 懂",不是"照着抄跑出结果"。
 独立于任何 provider(Vercel AI SDK + MCP + 本地模型),动手全在终端。
 
-**状态:** 🚧 building in public,一章一章造(当前 chapters 00–01)。
+**节奏:7 章 · 一天一台阶(每章 ≈ 2~4 小时)· 两周冲刺。** 每章 = 一个完整子系统 + 一个有分量的 lab。
+
+**状态:** 🚧 building in public(当前 chapters 00–01)。
 
 ---
 
@@ -88,9 +90,15 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 
 > 第 1 章**零依赖、不要 API key**(测试用确定性脚本模型)。真调模型的章节才引入 SDK / 本地模型 / BYOK。
 
-## 章节
+## 章节(7 天路线)
 
 - `chapters/00` — 什么是 agent(定向,不写代码,~5 分钟)👈 从这里开始
-- `chapters/01` — agent 的心脏:model → tool → result → model 的 loop
+- **Day 1 · `chapters/01`** — Agent Loop 完整版:loop + 工具 + 并发 + 异常 + maxSteps
+- Day 2 · 接真实模型(消息 IR + 流式 + provider adapter · Vercel AI SDK)
+- Day 3 · 真实工具(文件 / bash / 原子写 / 超时·取消·截断 / workspace 边界)
+- Day 4 · 有状态 & 持久化(有状态 agent + session 树 + JSONL)
+- Day 5 · 上下文管理(compaction + context editing + 预算投影)
+- Day 6 · 可扩展性(MCP + resources/skills + 扩展隔离)
+- Day 7 · 组装 & 评测(runtime + 三种 mode + 独立评测)
 
 进度见 `PROGRESS.md`。内容以各章 `README.md` 为准(`index.html` 只是站点雏形预览)。
