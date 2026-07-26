@@ -7,8 +7,8 @@
 ## ① 我的预测(动手前写)
 
 1. loop 转几圈(若先后调两次工具,两问都答):
-   (a) role 序列会变成什么样: model->loop->model->loop
-   (b) `model.step()` 会被调用几次: 5次
+   (a) role 序列会变成什么样: model_>loop_>model->loop->model
+   (b) `model.step()` 会被调用几次: 3次
 2. 谁执行:那条 tool-result 是模型放进 history 的,还是 loop 放的:
    - loop
 3. 靠什么配对(两问都答):
