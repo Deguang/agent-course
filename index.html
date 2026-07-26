@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>动手学 Agent</title>
+<style>
+  :root { --bg:#faf9f6; --fg:#1f2328; --muted:#6a737d; --accent:#c9622e; --line:#e5e2db; --card:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#16181c; --fg:#e6e6e6; --muted:#9aa0a6; --accent:#e08a5a; --line:#2c2f36; --card:#1e2126; } }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--fg); background:var(--bg); }
+  .wrap { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+  aside { border-right:1px solid var(--line); padding:24px 18px; }
+  aside h1 { font-size:15px; margin:0 0 4px; }
+  aside .sub { color:var(--muted); font-size:12px; margin-bottom:20px; }
+  nav a { display:block; padding:8px 10px; border-radius:8px; color:var(--fg); text-decoration:none; font-size:14px; }
+  nav a.active { background:color-mix(in srgb, var(--accent) 15%, transparent); color:var(--accent); font-weight:600; }
+  nav .soon { color:var(--muted); padding:8px 10px; font-size:14px; }
+  main { padding:40px 48px; max-width:760px; }
+  h2 { margin-top:0; }
+  .inv { border-left:3px solid var(--accent); background:var(--card); padding:12px 16px; border-radius:0 8px 8px 0; margin:20px 0; }
+  code, pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:13px; }
+  .gate { border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; margin:24px 0; }
+  .gate summary { cursor:pointer; font-weight:600; color:var(--accent); }
+  .gate[open] summary { margin-bottom:12px; }
+  .step { color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.04em; margin:28px 0 6px; }
+  footer { color:var(--muted); font-size:12px; margin-top:48px; border-top:1px solid var(--line); padding-top:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside>
+    <h1>动手学 Agent</h1>
+    <div class="sub">provider 中立 · TS · 习得导向</div>
+    <nav>
+      <a href="#00">00 · 什么是 agent</a>
+      <a class="active" href="#01">01 · agent 的心脏:loop</a>
+      <span class="soon">02–15 · 陆续解锁</span>
+    </nav>
+  </aside>
+  <main>
+    <h2>Chapter 01 · agent 的心脏:一个 loop</h2>
+    <p>把模型想成一个<strong>很聪明、但手脚被绑住</strong>的助理:能想、能说,却读不了文件、跑不了命令。
+       它只能<strong>提议</strong>"帮我读 README",真去执行、把结果递回去、再问它下一步的,是屋外那个人——
+       <strong>agent loop</strong>。这一章你就写这个人。</p>
+
+    <div class="inv">
+      <strong>一句要记住的:</strong> 模型只会「提议」,执行永远是 loop 的事。
+      模型说"调用 read"不代表文件被读了——真去读、把结果塞回对话、再叫模型继续的,是<strong>你写的 loop</strong>。
+      对任何 provider 都成立。
+    </div>
+
+    <div class="step">① 先观察</div>
+    <p>先别写代码。跑 <code>npm run demo:01</code>,把一次完整运行"看见"——尤其看清"模型提议"和"loop 执行"的区别。</p>
+    <div class="step">② 预测闸门</div>
+    <p>看完 demo,把预测写进 <code>chapters/01/LOG.md</code>。答完再展开正文 —— 先押注,才学得到。</p>
+    <details class="gate">
+      <summary>我已看过 demo、在 LOG.md 写下预测,展开正文</summary>
+      <div class="step">③ 空白构建</div>
+      <p>实现 <code>chapters/01/agent.ts</code> 里的 <code>runAgent</code>(现在它抛
+         <code>Lab 1.1 尚未实现</code>)。失败测试 <code>agent.test.ts</code> 就是规格,让它变绿:</p>
+      <pre>npm run test:01</pre>
+      <p>第一次应看到 <code>Lab 1.1 runAgent 尚未实现</code> —— 那是起点。卡住找 tutor,按
+         <code>定位→签名→伪代码→局部</code> 逐级要提示,别直接要完整答案。</p>
+      <div class="step">③ 讲回来</div>
+      <p>测试绿后,在 <code>LOG.md</code> 用自己的话讲清:为什么执行工具的是 loop 不是模型?</p>
+      <div class="step">④ 迁移题</div>
+      <p>做 <code>chapters/01/TRANSFER.md</code>:并发工具 / 工具抛异常 / 防跑飞。</p>
+    </details>
+
+    <footer>
+      动手全在终端;本页只做阅读 · 导航 · 预测闸门。真正的习得发生在你写 <code>agent.ts</code> 的时候。
+    </footer>
+  </main>
+</div>
+</body>
+</html>
