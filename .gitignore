@@ -4,3 +4,6 @@ node_modules/
 
 # 个人上下文(私密,不进公共课程)
 TUTOR.local.md
+
+# capstone 私有作答
+*.local.md
