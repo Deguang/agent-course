@@ -18,7 +18,8 @@
     "check": "npm run typecheck && npm run lint",
     "test:03": "node --test chapters/03/tools.test.ts",
     "test:04": "node --test chapters/04/session.test.ts",
-    "test:05": "node --test chapters/05/context.test.ts"
+    "test:05": "node --test chapters/05/context.test.ts",
+    "test:06": "node --test chapters/06/extensions.test.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.5",
