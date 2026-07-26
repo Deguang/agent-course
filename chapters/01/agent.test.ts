@@ -19,6 +19,21 @@ function scriptedModel(script: Step[]): Model & { calls: number } {
   return m;
 }
 
+// ── 从这个最简单的开始:模型第一次 step 就 final,根本不进循环 ──
+test("无工具:模型直接给最终答案", async () => {
+  const model = scriptedModel([{ kind: "final", text: "你好" }]);
+
+  const result = await runAgent(model, {}, "打个招呼");
+
+  assert.equal(result.finalText, "你好");
+  assert.equal(model.calls, 1);
+  assert.deepEqual(
+    result.history.map((e) => e.role),
+    ["user", "assistant-final"],
+  );
+});
+
+// ── 上面绿了再做这个:要执行工具、把结果配对喂回、再问模型 ──
 test("单工具往返:model → tool → model", async () => {
   const model = scriptedModel([
     { kind: "tool-calls", calls: [{ id: "c1", name: "read", args: { path: "README" } }] },
@@ -43,17 +58,4 @@ test("单工具往返:model → tool → model", async () => {
     | undefined;
   assert.equal(toolResult?.id, "c1", "tool-result 必须配对回原 call 的 id");
   assert.equal(toolResult?.text, "文件 README 的内容", "loop 必须真的执行了工具");
-});
-
-test("无工具:模型直接给最终答案", async () => {
-  const model = scriptedModel([{ kind: "final", text: "你好" }]);
-
-  const result = await runAgent(model, {}, "打个招呼");
-
-  assert.equal(result.finalText, "你好");
-  assert.equal(model.calls, 1);
-  assert.deepEqual(
-    result.history.map((e) => e.role),
-    ["user", "assistant-final"],
-  );
 });
