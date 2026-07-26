@@ -92,8 +92,8 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 
 ## 章节(7 天路线)
 
-- `chapters/00` — 什么是 agent(定向,不写代码,~5 分钟)👈 从这里开始
-- **Day 1 · `chapters/01`** — Agent Loop 完整版:loop + 工具 + 并发 + 异常 + maxSteps
+- `chapters/00` — Day 0 基础:模型 / token / 思维链 / 消息 / 工具 / agent(不写代码)👈 从这里开始
+- **Day 1 · `chapters/01`** — Agent Loop:loop + 工具 + 并发 + 异常 + maxSteps
 - Day 2 · 接真实模型(消息 IR + 流式 + provider adapter · Vercel AI SDK)
 - Day 3 · 真实工具(文件 / bash / 原子写 / 超时·取消·截断 / workspace 边界)
 - Day 4 · 有状态 & 持久化(有状态 agent + session 树 + JSONL)
