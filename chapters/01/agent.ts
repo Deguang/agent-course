@@ -1,11 +1,10 @@
-// Chapter 01 — 你的任务:写出那个 loop(runAgent)。
+// Chapter 01 — 你要写 runAgent(文件底部)。别改上面的类型,它们是你的"零件"。
 //
-// 先跑过 `npm run demo:01` 看懂那条四步轨迹,再回来。
-// 下面这些类型 = 你写 runAgent 会用到的全部"零件"(别改它们,你只写文件底部的 runAgent)。
-// 读预测题之前,先把这几个类型看一遍——它们就是 demo 那条轨迹在代码里的样子:
-//   · HistoryEntry[] = history:一个会越来越长的数组,记录至今发生的一切
-//   · role           = 每条 history 的"谁产生的"标记,共四种(见下)
-//   · model.step()   = 你每问模型一次"下一步做什么",就调一次;调一次只走一步
+// 动手前:① `npm run demo:01` 看轨迹 ② 读下面的类型 ③ 按 runAgent 上方的问题自己推结构。
+//
+// 唯一要内化的一句(想通它,loop 的结构你能自己推出来):
+//   ★ model 只会看 history 说话,它自己不会动手。执行永远是你(loop)的事。★
+// (为什么这样、三个角色怎么分工:见 chapters/01/README.md,不在这里重复。)
 
 export type ToolCall = {
   id: string;
@@ -42,24 +41,28 @@ export type AgentResult = {
 /**
  * runAgent —— 你要写的 loop。
  *
- * 你手上有:一句 userText、一个会 step 的 model、一堆能执行的 tools。
- * 你要做的:把它们循环接起来,自动跑出 demo 里那条轨迹,直到模型说完为止。
+ * 手上有:userText(用户请求)、model(会 step,只会想)、tools(能执行的函数)。
+ * 目标:让 demo 那条轨迹自动发生,直到 model 给出 final。
  *
- * 一个可以照着想的思路(不是标准答案,只是脚手架):
+ * ── 不给你算法。你自己推 ──
+ * 把上面那句(model 只看 history 说话)当支点,回答这三个问题,答案连起来就是你的 loop:
  *
- *   1. 历史从「用户那句话」开始(下面已经帮你放好了)。
- *   2. 反复做下面这件事:
- *        a. 问模型下一步:  const step = await model.step(history)
- *        b. 如果 step 是 "final" —— 把它记进历史,把 text 作为结果返回,结束。
- *        c. 如果 step 是 "tool-calls" ——
- *             · 先把模型这次的"提议"记进历史;
- *             · 对每一个 call:用 call.name 在 tools 里找到对应工具,执行它(await),
- *               把返回值作为一条 "tool-result" 追加进历史(记得带上 call.id、call.name);
- *             · 然后回到 a,再问一次模型(它现在能看到工具结果了)。
+ *   Q1(控制流):你问一次 step,若拿到 final 就能返回。但若拿到的是 tool-calls,
+ *               处理完之后任务结束了吗?——不结束,你还得再问。那你该用**什么结构**
+ *               来"反复问,直到 final"?(一次 if?还是别的?)
  *
- * 想清楚 demo 第②③④步分别对应上面哪一步,再动手。
- * 跑 `npm run test:01` 看测试(测试就是精确的规格)。第一次会红在下面这行 —— 那是起点。
- * 卡住了,回来告诉 tutor「我试了 X、卡在 Y」,按 定位→签名→伪代码→局部 逐级要提示。
+ *   Q2(顺序):你想让 model 下一轮"看见"工具结果。但 model 只看 history。
+ *              所以在你真正执行工具**之前**,得先往 history 里放什么?这两条(提议、结果)
+ *              谁先谁后?
+ *
+ *   Q3(配对):你执行完工具、往 history 追加 tool-result 时,要让 model 认出
+ *              "这是哪一次调用的结果"。这个标识你从**哪里**拿?自己编一个行不行?
+ *
+ * 推不动某一步,就去 agent.test.ts 看那一步对应的断言——测试会告诉你"对"长什么样。
+ *
+ * 下手法(别一次写完):先读 agent.test.ts,从最简单的"无工具"测试起,
+ * 只写让它变绿的最少代码;再让红色牵你写 tool 分支。
+ * 卡住:告诉 tutor「我试了 X、卡在 Y」,按 定位→签名→伪代码→局部 逐级要提示。
  */
 export async function runAgent(
   model: Model,
