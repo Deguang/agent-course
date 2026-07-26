@@ -8,7 +8,7 @@
 | 03 | 常用工具集(read/write/edit/glob/grep/bash+3不变量) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 04 | 有状态 & 持久化(session树+JSONL fail-closed:换行=提交/tainted/可分支) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 05 | 上下文管理(按语义组预算投影+compaction+context editing) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 06 | 可扩展性(MCP+skills+扩展隔离) | 未开始 | ☐ | ☐ | ☐ | ☐ |
+| 06 | 可扩展性(MCP 集成+skills 按需激活+扩展原子注册/隔离) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 07 | 编排与多 agent(loop→graph) | 未开始 | ☐ | ☐ | ☐ | ☐ |
 | 08 | Capstone 课程设计:独立做一个 agent 产品 | 未开始 | ☐ | ☐ | ☐ | ☐ |
 
