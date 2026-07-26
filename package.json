@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "check": "npm run typecheck && npm run lint"
+    "check": "npm run typecheck && npm run lint",
+    "test:03": "node --test chapters/03/tools.test.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.5",
