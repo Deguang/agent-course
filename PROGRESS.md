@@ -4,7 +4,7 @@
 |------|------|------|-------|---------|---------|-------|
 | 00 | Day 0 基础:模型/token/思维链/消息/工具/agent(不写码,~15-20min) | ✅ | ✅ | — | — | — |
 | 01 | Agent Loop 完整版(loop+工具+并发+异常+maxSteps) | 进行中 | ☐ | ☐ | ☐ | ☐ |
-| 02 | 接真实模型(消息 IR+流式+provider adapter,Vercel AI SDK) | 未开始 | ☐ | ☐ | ☐ | ☐ |
+| 02 | 接真实模型(raw→harness:provider adapter,provider 中立) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 03 | 真实工具(文件/bash/原子写/超时取消截断/边界) | 未开始 | ☐ | ☐ | ☐ | ☐ |
 | 04 | 有状态 & 持久化(有状态 agent+session 树+JSONL) | 未开始 | ☐ | ☐ | ☐ | ☐ |
 | 05 | 上下文管理(compaction+context editing+预算投影) | 未开始 | ☐ | ☐ | ☐ | ☐ |

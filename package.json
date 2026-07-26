@@ -11,6 +11,7 @@
     "test": "node --test chapters/*/*.test.ts",
     "test:01": "node --test chapters/01/agent.test.ts",
     "demo:01": "node chapters/01/demo.ts",
+    "test:02": "node --test chapters/02/adapter.test.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",
