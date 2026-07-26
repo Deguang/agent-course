@@ -6,11 +6,11 @@
 
 ## ① 我的预测(动手前写)
 
-1. 若任务需要先后调用两次工具:role 序列会变成 / `model.step()` 调几次:
+1. loop 转几圈:若先后调两次工具,role 序列 / `model.step()` 调几次:
    -
-2. demo 的"调一次工具"场景:`model.step()` 被调用几次?为什么:
+2. 谁执行:那条 tool-result 是模型放进 history 的,还是 loop 放的:
    -
-3. 那条 tool-result 是模型放进 history 的,还是 loop 放的:
+3. 靠什么配对:c1 从哪来 / loop 回填时乱编 id 会出什么问题:
    -
 
 ## ② 踩坑 / 卡在哪
