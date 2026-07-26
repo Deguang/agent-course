@@ -7,7 +7,54 @@
 一门为**习得**设计的 provider 中立 agent 应用课程 —— 目标是"会 + 懂",不是"照着抄跑出结果"。
 独立于任何 provider(Vercel AI SDK + MCP + 本地模型),动手全在终端。
 
-**状态:** 🚧 building in public,一章一章造(当前 1/15)。
+**状态:** 🚧 building in public,一章一章造(当前 chapters 00–01)。
+
+---
+
+## 快速开始
+
+**1. 拉取项目**
+
+```bash
+git clone <本仓库地址> agent-course
+cd agent-course
+```
+
+**2. 准备环境**(二选一)
+
+- **本地**:装 [Node 24+](https://nodejs.org/),然后 `npm install`。就绪。
+  (本课用 Node 原生 type stripping 直接跑 `.ts`,无需编译步骤。)
+- **不想装环境**:推到你自己的 GitHub 后,点 **Code → Codespaces → Create**,
+  浏览器里直接得到一个预装好的终端(iPad / Chromebook 也能做,个人账号有免费额度)。
+
+**3. 从第 0 章开始**
+
+```bash
+# 读定向(5 分钟,不写代码)
+open chapters/00/README.md      # 或用你的编辑器打开
+
+# 进第 1 章:先观察,再动手
+npm run demo:01                 # 看一次完整 agent 运行长什么样
+npm run test:01                 # 跑测试(第一次是红的 —— 那是你的起点)
+```
+
+然后打开 `chapters/01/README.md`,跟着 ①→⑤ 走。
+
+---
+
+## 怎么学:要不要 AI 陪学,都行
+
+这门课**设计成没有 AI 也能独立学完**——README 讲概念、`demo` 给你观察、**失败的测试给你反馈**、`TRANSFER.md` 出迁移题。AI 陪学是**加速器,不是必需品**(一门教你别当 AI 吉祥物的课,不该逼你必须有 AI 陪着)。
+
+| 方式 | 怎么做 | 体验 |
+|---|---|---|
+| **纯自学(无 AI)** | 靠 README + demo + 测试 + 迁移题,自己走通 | 完全可行,是底线保证 |
+| **聊天 LLM 陪学** | 把 [`AGENT.md`](./AGENT.md) 和本章内容贴给任意 LLM(claude.ai / ChatGPT…),让它按协议当 tutor | 能问、能要提示;测试自己跑 |
+| **coding agent 陪学** | 用 Claude Code 等 CLI 指向本仓库,它会自动读 `AGENT.md` 守协议、帮你跑测试读文件 | 最顺滑 |
+
+关键:[`AGENT.md`](./AGENT.md) 就是**陪学协议**——任何 LLM 读了它都会变成守规矩的 tutor(**不替你写答案**、卡住时逐级给提示)。所以不绑任何一家工具,和"provider 中立"一脉相承。
+
+---
 
 ## 学习契约(重要,先读)
 
@@ -26,21 +73,16 @@
 > 内容准确性公约见 [`CONTENT.md`](./CONTENT.md)——通用概念对齐主流课程(Anthropic / HuggingFace 等),
 > 具体 API 现查官方源 + 实跑验证,不凭记忆。
 
-## 环境
-
-- Node 24+(用原生 type stripping 直接跑 `.ts`,无需构建)。
-- 第 1 章**零依赖、不要 API key**(测试用确定性脚本模型)。真调模型的章节才引入 SDK / 本地模型 / BYOK。
-
-### 不用本地电脑也能做(GitHub Codespaces)
-
-本仓库带 `.devcontainer`。推到 GitHub 后点 **Code → Codespaces → Create**,即可在浏览器里获得一个预装 Node 24 的终端,**零本地安装**(iPad / Chromebook 也能做)。个人账号每月有免费额度。
-
-## 跑测试
+## 命令一览
 
 ```bash
-npm run test:01     # 第 1 章
-npm test            # 全部
+npm run demo:01     # 第 1 章观察 demo(先看懂,再动手)
+npm run test:01     # 第 1 章测试(= 本章规格,变绿即过)
+npm test            # 跑全部章节测试
+npm run check       # 类型检查 + lint(脚手架健康检查)
 ```
+
+> 第 1 章**零依赖、不要 API key**(测试用确定性脚本模型)。真调模型的章节才引入 SDK / 本地模型 / BYOK。
 
 ## 章节
 
