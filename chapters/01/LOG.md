@@ -6,11 +6,11 @@
 
 ## ① 我的预测(动手前写)
 
-1. history 里 role 的顺序:
+1. 若任务需要先后调用两次工具:role 序列会变成 / `model.step()` 调几次:
    -
-2. `model.step()` 被调用几次?为什么:
+2. demo 的"调一次工具"场景:`model.step()` 被调用几次?为什么:
    -
-3. 谁把 read 的返回值放进历史:
+3. 那条 tool-result 是模型放进 history 的,还是 loop 放的:
    -
 
 ## ② 踩坑 / 卡在哪
