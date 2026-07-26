@@ -6,6 +6,21 @@
 
 ---
 
+## 零、教学套路(提炼自主流课程)
+
+这些是设计每一章的**方法论**,提炼自 Hugging Face Agents Course、DeepLearning.AI《AI Agents in LangGraph》(Harrison Chase)、Karpathy《Zero to Hero》、Anthropic《Building effective agents》。下面的具体规则(§一、§二)都是这些套路的落地。
+
+1. **重新推导,而非重新阅读(Karpathy)。** 理解只来自学员**自己推导出**结构,不来自读懂别人的解释。→ 脚手架给"能逼出推导的问题",**不给可誊抄的算法**。这是本课最高原则,直接对应"消灭机械搬运"。
+2. **从零手写,再上框架(Ng/Chase)。** 先亲手建 loop,后面才用 Vercel AI SDK 等框架——"啊哈"点是看见框架替你藏了什么。每章都要让学员感到"我懂了黑盒里是什么"。
+3. **一个核心心智模型居中(HF/Ng)。** 每章只锚一个必须内化的模型(Ch01 = "model 只会想/提议,你的代码负责执行")。其余细节围绕它,别喧宾夺主。
+4. **概念及时供给、由小到大(HF/Karpathy)。** 概念在"用到它的前一刻"给,不一次灌完;从最小可跑物起步,逐步长大。别在动手前堆一墙背景。
+5. **可跑验证 + 假信号警觉(Karpathy)。** 代码能跑=最硬的准确性;但要警惕"跑得动却悄悄错/或誊抄也能变绿"的假信号——用"空白重推 + 讲回来"检验真懂。
+6. **贯穿的命名例子(HF 的 Alfred)。** 用一个连续的例子降低认知切换(可选,视章节)。
+
+> 出处:HF Agents Course(huggingface.co/learn/agents-course)、DeepLearning.AI AI Agents in LangGraph、Karpathy Neural Networks: Zero to Hero、Anthropic Building effective agents。
+
+---
+
 ## 一、章节设计
 
 ### 1. 先建前提,再深入(别有前置缺口)
