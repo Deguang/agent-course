@@ -81,11 +81,7 @@ test("并发:一步两个调用,两个都执行、各自按 id 配对", async ()
   assert.equal(model.calls, 2, "两个调用在同一步,模型仍只被问 2 次");
   const results = r.history.filter(isToolResult);
   assert.equal(results.length, 2, "两个调用要有两条配对结果");
-  assert.deepEqual(
-    results.map((e) => e.id).sort(),
-    ["c1", "c2"],
-    "两条结果分别配 c1、c2",
-  );
+  assert.deepEqual(results.map((e) => e.id).sort(), ["c1", "c2"], "两条结果分别配 c1、c2");
 });
 
 // ── 4. 工具异常当数据:工具 throw 不该炸 loop,而是变成 isError 结果喂回 ──

@@ -15,9 +15,7 @@ export type ToolCall = {
 // 模型每次 step 只返回两种东西之一:
 //   - tool-calls:它想调一个或多个工具(calls 可能不止一个 —— 这就是"并发调用")
 //   - final:     它说完了,给出最终文本
-export type Step =
-  | { kind: "tool-calls"; calls: ToolCall[] }
-  | { kind: "final"; text: string };
+export type Step = { kind: "tool-calls"; calls: ToolCall[] } | { kind: "final"; text: string };
 
 // history = 至今发生的一切(就是 demo 打印的那些行)。它会随 loop 越来越长。
 export type HistoryEntry =

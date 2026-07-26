@@ -33,7 +33,9 @@ for (const [i, e] of finishedRun.entries()) {
   const n = String(i + 1).padStart(2, "0");
   if (e.role === "user") console.log(`${n} [用户]      ${e.text}`);
   else if (e.role === "assistant-tools")
-    console.log(`${n} [模型·提议] 我要调用工具: ${e.calls.map((c) => `${c.name}(${JSON.stringify(c.args)}) #${c.id}`).join(", ")}`);
+    console.log(
+      `${n} [模型·提议] 我要调用工具: ${e.calls.map((c) => `${c.name}(${JSON.stringify(c.args)}) #${c.id}`).join(", ")}`,
+    );
   else if (e.role === "tool-result")
     console.log(`${n} [loop·执行] 工具 ${e.name} 返回(配对 #${e.id}): ${e.text}`);
   else console.log(`${n} [模型·最终] ${e.text}`);
