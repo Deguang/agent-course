@@ -90,15 +90,18 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 
 > 第 1 章**零依赖、不要 API key**(测试用确定性脚本模型)。真调模型的章节才引入 SDK / 本地模型 / BYOK。
 
-## 章节(7 天路线)
+## 路线(8 天 · 沿 raw→harness→loop→graph 演进)
 
-- `chapters/00` — Day 0 基础:模型 / token / 思维链 / 消息 / 工具 / agent(不写代码)👈 从这里开始
+完整课程设计见 [`CURRICULUM.md`](./CURRICULUM.md)。
+
+- `chapters/00` — Day 0 基础:模型 / token / 思维链 / 消息 / 工具 / agent / 演进全景 👈 从这里开始
 - **Day 1 · `chapters/01`** — Agent Loop:loop + 工具 + 并发 + 异常 + maxSteps
-- Day 2 · 接真实模型(消息 IR + 流式 + provider adapter · Vercel AI SDK)
-- Day 3 · 真实工具(文件 / bash / 原子写 / 超时·取消·截断 / workspace 边界)
+- Day 2 · 接真实模型(raw → harness:消息 IR + 流式 + provider adapter · Vercel AI SDK)
+- Day 3 · 常用工具集(read/write/edit/glob/grep/bash/web + 原子写 + 边界)
 - Day 4 · 有状态 & 持久化(有状态 agent + session 树 + JSONL)
 - Day 5 · 上下文管理(compaction + context editing + 预算投影)
-- Day 6 · 可扩展性(MCP + resources/skills + 扩展隔离)
-- Day 7 · 组装 & 评测(runtime + 三种 mode + 独立评测)
+- Day 6 · 可扩展性(MCP + skills + 扩展隔离)
+- Day 7 · 编排与多 agent(loop → graph)
+- **Day 8 · Capstone 课程设计** — 独立设计并开发一个 agent 功能产品
 
 进度见 `PROGRESS.md`。内容以各章 `README.md` 为准(`index.html` 只是站点雏形预览)。
