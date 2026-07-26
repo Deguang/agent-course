@@ -1,7 +1,11 @@
 // Chapter 01 — 你的任务:写出那个 loop(runAgent)。
 //
 // 先跑过 `npm run demo:01` 看懂那条四步轨迹,再回来。
-// 这里的类型就是那条轨迹里的"零件",别改;你只写文件底部的 runAgent。
+// 下面这些类型 = 你写 runAgent 会用到的全部"零件"(别改它们,你只写文件底部的 runAgent)。
+// 读预测题之前,先把这几个类型看一遍——它们就是 demo 那条轨迹在代码里的样子:
+//   · HistoryEntry[] = history:一个会越来越长的数组,记录至今发生的一切
+//   · role           = 每条 history 的"谁产生的"标记,共四种(见下)
+//   · model.step()   = 你每问模型一次"下一步做什么",就调一次;调一次只走一步
 
 export type ToolCall = {
   id: string;
