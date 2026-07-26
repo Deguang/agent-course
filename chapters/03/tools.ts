@@ -46,7 +46,12 @@ export async function write(root: string, relPath: string, content: string): Pro
  *   只有**恰好 1 次**才替换,并用原子写落盘。
  * (这是"模型看着旧内容提议改动"时防止改错/过期改动的关键防线。)
  */
-export async function edit(root: string, relPath: string, oldStr: string, newStr: string): Promise<void> {
+export async function edit(
+  root: string,
+  relPath: string,
+  oldStr: string,
+  newStr: string,
+): Promise<void> {
   throw new Error("Lab 3.4 edit 尚未实现");
 }
 

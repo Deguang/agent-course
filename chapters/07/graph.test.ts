@@ -67,10 +67,7 @@ test("runGraph:路由成环不停 → 超 maxSteps 抛错", async () => {
 test("parallel:并发跑多个分支再合并", async () => {
   type P = { a?: string; b?: string };
   const node = parallel<P>(
-    [
-      async (s) => ({ ...s, a: "A" }),
-      async (s) => ({ ...s, b: "B" }),
-    ],
+    [async (s) => ({ ...s, a: "A" }), async (s) => ({ ...s, b: "B" })],
     (results) => Object.assign({}, ...results),
   );
   const out = await node({});

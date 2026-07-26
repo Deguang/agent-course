@@ -21,7 +21,8 @@
       "preset": "recommended",
       "correctness": {
         "noUnusedFunctionParameters": "off",
-        "noUnusedVariables": "off"
+        "noUnusedVariables": "off",
+        "noUnusedPrivateClassMembers": "off"
       }
     }
   },

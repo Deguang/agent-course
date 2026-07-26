@@ -31,7 +31,9 @@ test("historyToWire:每种 history 条目翻译成对的 wire 消息", () => {
 
   assert.deepEqual(req.messages[0], { role: "user", content: "读 README" });
   assert.equal(req.messages[1]?.role, "assistant");
-  assert.deepEqual(req.messages[1]?.tool_calls, [{ id: "c1", name: "read", args: { path: "README" } }]);
+  assert.deepEqual(req.messages[1]?.tool_calls, [
+    { id: "c1", name: "read", args: { path: "README" } },
+  ]);
   assert.deepEqual(req.messages[2], { role: "tool", tool_call_id: "c1", content: "文件内容" });
   assert.deepEqual(req.messages[3], { role: "assistant", content: "这是一门课" });
   assert.deepEqual(req.tools, [{ name: "read" }, { name: "web" }]);
@@ -128,9 +130,12 @@ test("generateObject:模型返回合法 JSON → 校验通过、拿到类型化�
   type Person = { name: string; age: number };
   const validate = (raw: unknown): Person => {
     if (
-      typeof raw === "object" && raw !== null &&
-      "name" in raw && typeof (raw as Person).name === "string" &&
-      "age" in raw && typeof (raw as Person).age === "number"
+      typeof raw === "object" &&
+      raw !== null &&
+      "name" in raw &&
+      typeof (raw as Person).name === "string" &&
+      "age" in raw &&
+      typeof (raw as Person).age === "number"
     ) {
       return raw as Person;
     }
