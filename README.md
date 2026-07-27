@@ -96,6 +96,11 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 - Day 5 · 上下文管理(compaction + context editing + 预算投影)
 - Day 6 · 可扩展性(MCP + skills + 扩展隔离)
 - Day 7 · 编排与多 agent(loop → graph)
-- **Day 8 · Capstone 课程设计** — 独立设计并开发一个 agent 功能产品
+- Day 8 · 知识层:RAG / 检索(+ 长期记忆)
+- Day 9 · Guardrails & 人在环路(权限 / 审批 / 花费·循环上限 / 注入防御)
+- Day 10 · Evals & 可观测(trajectory eval / 回归套件 / tracing)
+- **Day 11 · Capstone 课程设计** — 独立设计并开发一个 agent 功能产品
+
+> 后 3 章(RAG / Guardrails / Evals)是对照 2026 行业主流栈补齐的"生产必备"层。
 
 进度见 `PROGRESS.md`。内容以各章 `README.md` 为准(`index.html` 只是站点雏形预览)。
