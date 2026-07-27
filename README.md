@@ -9,7 +9,7 @@
 
 **节奏:11 章 + capstone · 一天一台阶(每章 ≈ 2~4 小时)· 两周冲刺。** 每章 = 一个完整子系统 + 一个有分量的 lab。
 
-**状态:** 🚧 building in public(chapters 00–11 已建,测试待学员实现)。
+**状态:** 🚧 building in public(chapters 00–12 已建,测试待学员实现)。
 
 ---
 

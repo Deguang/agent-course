@@ -64,8 +64,8 @@ const tools = { read /*, add, search, ... 任意多个 */ };
 ```
 ① user           读 README 并概括                      ← 你的请求
 ② model(提议)    调用 read, args={path:"README"}, id=c1 ← 模型只提议
-③ loop(执行)     read 返回 "文件 README 的内容"(配 id=c1) ← 你的代码真去执行
-④ model(最终)    这是一门 agent 课程                    ← 模型看到结果后收尾
+③ loop(执行)     read 返回 "本项目是一门 agent 课程…"(配 id=c1) ← 你的代码真去执行
+④ model(最终)    这是一门教你从零构建 agent 的课程。       ← 模型看到结果后收尾
 ```
 
 三个关键概念,全在这四步里:
