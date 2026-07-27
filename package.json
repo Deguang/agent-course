@@ -24,7 +24,8 @@
     "test:08": "node --test chapters/08/rag.test.ts",
     "test:09": "node --test chapters/09/guardrails.test.ts",
     "test:10": "node --test chapters/10/eval.test.ts",
-    "test:11": "node --test chapters/11/prod.test.ts"
+    "test:11": "node --test chapters/11/prod.test.ts",
+    "live:02": "node chapters/02/live.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.5",
