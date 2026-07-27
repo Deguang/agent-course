@@ -4,12 +4,14 @@
 // 关键:它只产 WireChunk —— 上面的 accumulate / makeModel / runAgent 一行不改就能驱动真模型。
 //   这就是"provider 中立"的兑现:换 provider 只换这一个文件里的 baseURL/model。
 //
-// 免费额度示例(BYOK,任选其一,设对应环境变量即可):
+// 免费额度示例(BYOK,任选其一,设对应环境变量即可 —— 详见 README「跑真的」):
 //   GLM(智谱): export GLM_API_KEY=...         (open.bigmodel.cn,glm-4-flash 免费、国内直连、工具支持好 —— 首选)
 //   Groq:       export GROQ_API_KEY=...        (console.groq.com/keys,极快;部分区域 403)
 //   Gemini:     export GEMINI_API_KEY=...      (aistudio.google.com/apikey,额度大)
 //   OpenRouter: export OPENROUTER_API_KEY=...  (openrouter.ai,有 :free 模型)
+//   Ollama 本地: export OLLAMA_MODEL=qwen2.5   (零 key、完全离线;需先装 ollama 并 pull 模型)
 //
+// ⚠️ 安全:key 只走环境变量,**绝不写进代码、绝不 commit**。密钥泄露先轮换,再排查。
 // 跑:  GLM_API_KEY=... node chapters/02/live.ts
 
 import { runAgent, type ToolRegistry } from "../01/agent.ts";
@@ -154,8 +156,15 @@ function pickProvider(): { baseURL: string; apiKey: string; model: string } {
       apiKey: or,
       model: "meta-llama/llama-3.3-70b-instruct",
     };
+  // Ollama 本地:零 key、完全离线。装 ollama + `ollama pull qwen2.5`,设 OLLAMA_MODEL 即用。
+  if (process.env.OLLAMA_MODEL)
+    return {
+      baseURL: "http://localhost:11434/v1",
+      apiKey: "ollama",
+      model: process.env.OLLAMA_MODEL,
+    };
   throw new Error(
-    "没找到 key。设置其一:GLM_API_KEY(智谱,国内免费首选)/ GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY",
+    "没找到 key。设置其一:GLM_API_KEY(智谱,国内免费首选)/ GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / OLLAMA_MODEL(本地零 key)",
   );
 }
 
