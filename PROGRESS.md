@@ -12,7 +12,7 @@
 | 07 | 编排与多 agent(graph 引擎+分支/回环/并行+何时别上graph) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 08 | 知识层 RAG/检索(chunk+余弦相似度+向量库+agentic RAG+长期记忆) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 09 | Guardrails & 人在环路(权限allow/ask/deny+HITL+花费步数护栏+注入防御) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 10 | Evals & 可观测(trajectory eval/回归套件/tracing) | 未开始 | ☐ | ☐ | ☐ | ☐ |
+| 10 | Evals & 可观测(Tracer+runEvalCase/Suite:执行判定分离/失败隔离/trajectory) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 11 | Capstone 课程设计(选题+一页设计+组装+自评) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 
 > tutor 跨会话读这里:知道学到哪、该回考什么。学员每完成一步自己打勾。
