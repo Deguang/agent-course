@@ -33,7 +33,25 @@ export async function guardedExecute(
   policy: PermissionPolicy,
   approve: ApproveFn,
 ): Promise<GuardedResult> {
-  throw new Error("Lab 9.1 guardedExecute 尚未实现");
+  const decision = policy(call);
+  if (decision === "deny") {
+    return { id: call.id, name: call.name, text: "被策略拒绝", isError: true };
+  }
+  if (decision === "ask") {
+    const ok = await approve(call);
+    if (!ok) return { id: call.id, name: call.name, text: "被用户拒绝", isError: true };
+  }
+  try {
+    const text = await execute(call);
+    return { id: call.id, name: call.name, text, isError: false };
+  } catch (e) {
+    return {
+      id: call.id,
+      name: call.name,
+      text: e instanceof Error ? e.message : String(e),
+      isError: true,
+    };
+  }
 }
 
 /**
@@ -53,8 +71,11 @@ export class BudgetGuard {
     this.#maxSpend = limits.maxSpend ?? Number.POSITIVE_INFINITY;
   }
 
-  charge(_spend: number): void {
-    throw new Error("Lab 9.2 BudgetGuard.charge 尚未实现");
+  charge(spend: number): void {
+    if (this.#steps + 1 > this.#maxSteps) throw new Error("超过步数上限");
+    if (this.#spent + spend > this.#maxSpend) throw new Error("超过花费上限");
+    this.#steps += 1;
+    this.#spent += spend;
   }
 
   get steps(): number {

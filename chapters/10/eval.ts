@@ -18,8 +18,8 @@ export type Span = { type: "model" | "tool"; name: string; ms: number; tokens?: 
 export class Tracer {
   #spans: Span[] = [];
 
-  record(_span: Span): void {
-    throw new Error("Lab 10.1 Tracer.record 尚未实现");
+  record(span: Span): void {
+    this.#spans.push(span);
   }
 
   spans(): Span[] {
@@ -27,7 +27,11 @@ export class Tracer {
   }
 
   summary(): { count: number; totalTokens: number; totalMs: number } {
-    throw new Error("Lab 10.1 Tracer.summary 尚未实现");
+    return {
+      count: this.#spans.length,
+      totalTokens: this.#spans.reduce((s, x) => s + (x.tokens ?? 0), 0),
+      totalMs: this.#spans.reduce((s, x) => s + x.ms, 0),
+    };
   }
 }
 
@@ -46,7 +50,12 @@ export type CaseResult = { name: string; pass: boolean; error?: string };
  *   (判定与执行分离:run 负责"跑",check 负责"判",runEvalCase 负责"稳稳收集结果"。)
  */
 export async function runEvalCase<S>(c: EvalCase<S>): Promise<CaseResult> {
-  throw new Error("Lab 10.2 runEvalCase 尚未实现");
+  try {
+    const result = await c.run();
+    return { name: c.name, pass: c.check(result) };
+  } catch (e) {
+    return { name: c.name, pass: false, error: e instanceof Error ? e.message : String(e) };
+  }
 }
 
 /**
@@ -57,5 +66,8 @@ export async function runEvalSuite(cases: EvalCase<unknown>[]): Promise<{
   results: CaseResult[];
   passRate: number;
 }> {
-  throw new Error("Lab 10.3 runEvalSuite 尚未实现");
+  const results: CaseResult[] = [];
+  for (const c of cases) results.push(await runEvalCase(c));
+  const passed = results.filter((r) => r.pass).length;
+  return { results, passRate: cases.length === 0 ? 1 : passed / cases.length };
 }

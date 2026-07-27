@@ -28,12 +28,21 @@ export class SemanticCache<V> {
     this.#sim = similarity;
   }
 
-  set(_embedding: Vector, _value: V): void {
-    throw new Error("Lab 11.1 SemanticCache.set 尚未实现");
+  set(embedding: Vector, value: V): void {
+    this.#entries.push({ embedding, value });
   }
 
-  get(_queryEmbedding: Vector, _threshold: number): V | undefined {
-    throw new Error("Lab 11.1 SemanticCache.get 尚未实现");
+  get(queryEmbedding: Vector, threshold: number): V | undefined {
+    let best: V | undefined;
+    let bestScore = Number.NEGATIVE_INFINITY;
+    for (const e of this.#entries) {
+      const s = this.#sim(queryEmbedding, e.embedding);
+      if (s > bestScore) {
+        bestScore = s;
+        best = e.value;
+      }
+    }
+    return bestScore >= threshold ? best : undefined;
   }
 
   get size(): number {
@@ -55,10 +64,24 @@ export type SuspendedRun = {
  *   (这就是 HITL/暂停能"端到端"的前提:后端状态机能挂起、暴露给前端、人介入后从同一状态继续。)
  */
 export function serializeResumable(run: SuspendedRun): string {
-  throw new Error("Lab 11.2 serializeResumable 尚未实现");
+  return JSON.stringify(run);
 }
 export function resume(token: string): SuspendedRun {
-  throw new Error("Lab 11.2 resume 尚未实现");
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(token);
+  } catch {
+    throw new Error("恢复令牌损坏:不是合法 JSON");
+  }
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    !("history" in parsed) ||
+    !("pending" in parsed)
+  ) {
+    throw new Error("恢复令牌结构不对:缺少 history/pending");
+  }
+  return parsed as SuspendedRun;
 }
 
 // ── 3. 上线门禁:把回归套件接成 CI gate ──
@@ -76,5 +99,16 @@ export function evalGate(
   baselinePassed: string[],
   minPassRate: number,
 ): GateResult {
-  throw new Error("Lab 11.3 evalGate 尚未实现");
+  const reasons: string[] = [];
+  const passedNow = new Map(current.map((r) => [r.name, r.pass]));
+
+  for (const name of baselinePassed) {
+    if (passedNow.get(name) === false) reasons.push(`回归:${name} 曾通过、这次失败`);
+  }
+
+  const passed = current.filter((r) => r.pass).length;
+  const rate = current.length === 0 ? 1 : passed / current.length;
+  if (rate < minPassRate) reasons.push(`通过率 ${rate.toFixed(2)} < 门槛 ${minPassRate}`);
+
+  return { pass: reasons.length === 0, reasons };
 }

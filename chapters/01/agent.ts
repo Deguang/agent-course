@@ -67,5 +67,33 @@ export async function runAgent(
 ): Promise<AgentResult> {
   const history: HistoryEntry[] = [{ role: "user", text: userText }];
 
-  throw new Error("Lab 1.1 runAgent 尚未实现");
+  let steps = 0;
+  while (true) {
+    if (steps >= maxSteps) {
+      return { finalText: "", history, stoppedReason: "max-steps" };
+    }
+    const step = await model.step(history);
+    steps++;
+
+    if (step.kind === "final") {
+      history.push({ role: "assistant-final", text: step.text });
+      return { finalText: step.text, history, stoppedReason: "final" };
+    }
+
+    // tool-calls:先把"模型的提议"记进 history,模型下一轮才看得到自己调过什么。
+    history.push({ role: "assistant-tools", calls: step.calls });
+    for (const call of step.calls) {
+      let text: string;
+      let isError = false;
+      try {
+        const tool = tools[call.name];
+        if (!tool) throw new Error(`未知工具: ${call.name}`);
+        text = await tool(call.args);
+      } catch (e) {
+        text = e instanceof Error ? e.message : String(e);
+        isError = true;
+      }
+      history.push({ role: "tool-result", id: call.id, name: call.name, text, isError });
+    }
+  }
 }

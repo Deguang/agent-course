@@ -16,7 +16,20 @@ export type Vector = number[];
  *   返回:非空片段数组,保持原顺序。
  */
 export function chunk(text: string, maxLen: number): string[] {
-  throw new Error("Lab 8.1 chunk 尚未实现");
+  const paras = text.split("\n\n");
+  const chunks: string[] = [];
+  let cur = "";
+  for (const p of paras) {
+    const candidate = cur ? `${cur}\n\n${p}` : p;
+    if (candidate.length <= maxLen) {
+      cur = candidate;
+    } else {
+      if (cur) chunks.push(cur);
+      cur = p; // 单段本身超 maxLen 也允许单独成块(见迁移题)
+    }
+  }
+  if (cur) chunks.push(cur);
+  return chunks;
 }
 
 /**
@@ -25,7 +38,19 @@ export function chunk(text: string, maxLen: number): string[] {
  *   (长度不等或零向量→按你认为合理的方式处理,并在测试里体现。)
  */
 export function cosineSimilarity(a: Vector, b: Vector): number {
-  throw new Error("Lab 8.2 cosineSimilarity 尚未实现");
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    const ai = a[i] ?? 0;
+    const bi = b[i] ?? 0;
+    dot += ai * bi;
+    normA += ai * ai;
+    normB += bi * bi;
+  }
+  if (normA === 0 || normB === 0) return 0; // 零向量:无方向,定义为 0
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
 export type Doc = { text: string; embedding: Vector };
@@ -46,8 +71,11 @@ export class VectorStore {
    * Lab 8.3 — search:返回与 query 向量最相似的前 k 条(按 score 从高到低)。
    *   对每个 doc 算 cosineSimilarity(query, doc.embedding),排序,取前 k,返回 { text, score }。
    */
-  search(_query: Vector, _k: number): Hit[] {
-    throw new Error("Lab 8.3 VectorStore.search 尚未实现");
+  search(query: Vector, k: number): Hit[] {
+    return this.#docs
+      .map((d) => ({ text: d.text, score: cosineSimilarity(query, d.embedding) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, k);
   }
 
   get size(): number {

@@ -18,7 +18,17 @@ export type Group = HistoryEntry[];
  *   (为什么按 user 分?因为一次交互从用户开口开始,它引发的工具调用/结果/答复是一个不可分的整体。)
  */
 export function groupInteractions(history: HistoryEntry[]): Group[] {
-  throw new Error("Lab 5.1 groupInteractions 尚未实现");
+  const groups: Group[] = [];
+  let cur: Group | null = null;
+  for (const e of history) {
+    if (e.role === "user" || cur === null) {
+      cur = [e];
+      groups.push(cur);
+    } else {
+      cur.push(e);
+    }
+  }
+  return groups;
 }
 
 export type Projection = {
@@ -40,5 +50,33 @@ export function projectWithinBudget(
   budgetTokens: number,
   estimate: (entry: HistoryEntry) => number,
 ): Projection {
-  throw new Error("Lab 5.2 projectWithinBudget 尚未实现");
+  const groupTokens = groups.map((g) => g.reduce((sum, e) => sum + estimate(e), 0));
+
+  const keptGroups: Group[] = [];
+  let used = 0;
+  let droppedGroups = 0;
+  let overflow = false;
+
+  for (let i = groups.length - 1; i >= 0; i--) {
+    const g = groups[i];
+    const t = groupTokens[i] ?? 0;
+    if (g === undefined) continue;
+    if (used + t <= budgetTokens) {
+      keptGroups.unshift(g);
+      used += t;
+    } else {
+      droppedGroups = i + 1; // groups[0..i] 都丢
+      break;
+    }
+  }
+
+  // 边界:最新一组自己就超预算 —— 仍保留整组,标 overflow。
+  if (keptGroups.length === 0 && groups.length > 0) {
+    const last = groups[groups.length - 1];
+    if (last) keptGroups.push(last);
+    overflow = true;
+    droppedGroups = groups.length - 1;
+  }
+
+  return { kept: keptGroups.flat(), droppedGroups, overflow };
 }

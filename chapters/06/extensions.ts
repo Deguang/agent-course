@@ -21,7 +21,12 @@ export interface McpServer {
  *   这样 MCP server 的能力就能被 Day 1 的 loop 直接调用 —— loop 根本不知道它来自 MCP。
  */
 export async function mcpToolRegistry(server: McpServer, namespace: string): Promise<ToolRegistry> {
-  throw new Error("Lab 6.1 mcpToolRegistry 尚未实现");
+  const tools = await server.listTools();
+  const registry: ToolRegistry = {};
+  for (const t of tools) {
+    registry[`${namespace}.${t.name}`] = (args) => server.callTool(t.name, args);
+  }
+  return registry;
 }
 
 // ── skills:带正文的能力包,但正文按需加载 ──
@@ -39,7 +44,12 @@ export type Skill = {
  *   返回一个字符串(拼给 system prompt)。
  */
 export async function buildSkillContext(skills: Skill[], activated: string[]): Promise<string> {
-  throw new Error("Lab 6.2 buildSkillContext 尚未实现");
+  const parts: string[] = [];
+  for (const s of skills) parts.push(`${s.name}: ${s.description}`);
+  for (const s of skills) {
+    if (activated.includes(s.name)) parts.push(await s.loadBody());
+  }
+  return parts.join("\n");
 }
 
 // ── 扩展:第三方用一个 factory 往注册表里加工具 ──
@@ -53,5 +63,11 @@ export type ExtensionFactory = (register: (name: string, tool: Tool) => void) =>
  *   (为什么?坏扩展不能把系统污染成"注册了一半"的不一致状态。)
  */
 export function registerExtension(target: ToolRegistry, factory: ExtensionFactory): void {
-  throw new Error("Lab 6.3 registerExtension 尚未实现");
+  const staging: ToolRegistry = {};
+  // 先全跑在暂存表:factory 若抛错,直接冒泡出去,target 一个字节都没动。
+  factory((name, tool) => {
+    staging[name] = tool;
+  });
+  // 全成功才提交。
+  Object.assign(target, staging);
 }

@@ -6,6 +6,7 @@
 //   ★ 2. 原子写:写文件要么全成功、要么磁盘不变——绝不留半个文件(temp + rename)。
 //   ★ 3. 精确 edit:按精确字符串替换,且必须**恰好命中一次**(0 次或多次都报错)——防止改错地方。
 
+import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
@@ -24,12 +25,18 @@ export type BashResult = {
  * 提示:`path.resolve(root, relPath)` 后,检查它是否以 `path.resolve(root)` 为前缀。
  */
 export function resolveInWorkspace(root: string, relPath: string): string {
-  throw new Error("Lab 3.1 resolveInWorkspace 尚未实现");
+  const base = path.resolve(root);
+  const abs = path.resolve(base, relPath);
+  if (abs !== base && !abs.startsWith(base + path.sep)) {
+    throw new Error(`路径越界(在 workspace 外): ${relPath}`);
+  }
+  return abs;
 }
 
 /** Lab 3.2 — 读文件(先过边界)。可选:支持大文件按行范围读(offset/limit)。 */
 export async function read(root: string, relPath: string): Promise<string> {
-  throw new Error("Lab 3.2 read 尚未实现");
+  const abs = resolveInWorkspace(root, relPath);
+  return fs.readFile(abs, "utf8");
 }
 
 /**
@@ -37,7 +44,11 @@ export async function read(root: string, relPath: string): Promise<string> {
  * (为什么?进程可能在写一半时崩;rename 在同一文件系统上是原子的,读者永远看到"旧的完整"或"新的完整"。)
  */
 export async function write(root: string, relPath: string, content: string): Promise<void> {
-  throw new Error("Lab 3.3 write 尚未实现");
+  const abs = resolveInWorkspace(root, relPath);
+  await fs.mkdir(path.dirname(abs), { recursive: true });
+  const tmp = `${abs}.tmp`;
+  await fs.writeFile(tmp, content);
+  await fs.rename(tmp, abs);
 }
 
 /**
@@ -52,7 +63,12 @@ export async function edit(
   oldStr: string,
   newStr: string,
 ): Promise<void> {
-  throw new Error("Lab 3.4 edit 尚未实现");
+  const abs = resolveInWorkspace(root, relPath);
+  const cur = await fs.readFile(abs, "utf8");
+  const hits = cur.split(oldStr).length - 1;
+  if (hits === 0) throw new Error(`edit 未命中(0 次): ${oldStr}`);
+  if (hits > 1) throw new Error(`edit 命中多次(${hits} 次,有歧义): ${oldStr}`);
+  await write(root, relPath, cur.replace(oldStr, newStr));
 }
 
 /**
@@ -60,14 +76,46 @@ export async function edit(
  * (真正的 glob 语法 `**​/*.{a,b}` 是迁移题;本章先掌握"递归遍历 + 过滤 + 返回相对路径"。)
  */
 export async function glob(root: string, suffix: string): Promise<string[]> {
-  throw new Error("Lab 3.5 glob 尚未实现");
+  const base = path.resolve(root);
+  const out: string[] = [];
+  async function walk(dir: string): Promise<void> {
+    for (const e of await fs.readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) await walk(full);
+      else if (e.name.endsWith(suffix)) out.push(path.relative(base, full));
+    }
+  }
+  await walk(base);
+  return out.sort();
 }
 
 /**
  * Lab 3.6 — grep:递归遍历 root 下的文本文件,逐行匹配正则,返回命中(相对路径 + 1 起的行号 + 该行)。
  */
 export async function grep(root: string, pattern: string): Promise<GrepHit[]> {
-  throw new Error("Lab 3.6 grep 尚未实现");
+  const base = path.resolve(root);
+  const re = new RegExp(pattern);
+  const hits: GrepHit[] = [];
+  async function walk(dir: string): Promise<void> {
+    for (const e of await fs.readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        await walk(full);
+        continue;
+      }
+      let content: string;
+      try {
+        content = await fs.readFile(full, "utf8");
+      } catch {
+        continue; // 二进制/不可读文件跳过
+      }
+      content.split("\n").forEach((text, i) => {
+        if (re.test(text)) hits.push({ file: path.relative(base, full), line: i + 1, text });
+      });
+    }
+  }
+  await walk(base);
+  return hits;
 }
 
 /**
@@ -81,7 +129,39 @@ export function bash(
   command: string,
   opts?: { cwd?: string; timeoutMs?: number; maxOutputBytes?: number },
 ): Promise<BashResult> {
-  throw new Error("Lab 3.7 bash 尚未实现");
+  const { cwd, timeoutMs, maxOutputBytes } = opts ?? {};
+  return new Promise((resolve) => {
+    const child = spawn(command, { shell: true, cwd });
+    let stdout = "";
+    let stderr = "";
+    let truncated = false;
+    let timedOut = false;
+    child.stdout.on("data", (d: Buffer) => {
+      stdout += d.toString();
+      if (maxOutputBytes != null && stdout.length > maxOutputBytes) {
+        stdout = stdout.slice(0, maxOutputBytes);
+        truncated = true;
+      }
+    });
+    child.stderr.on("data", (d: Buffer) => {
+      stderr += d.toString();
+    });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (timeoutMs != null) {
+      timer = setTimeout(() => {
+        timedOut = true;
+        child.kill("SIGKILL");
+      }, timeoutMs);
+    }
+    child.on("close", (code) => {
+      if (timer) clearTimeout(timer);
+      resolve({ stdout, stderr, exitCode: code, truncated, timedOut });
+    });
+    child.on("error", () => {
+      if (timer) clearTimeout(timer);
+      resolve({ stdout, stderr, exitCode: null, truncated, timedOut });
+    });
+  });
 }
 
 // 说明:read/write/edit/glob/grep/bash 各是一个"真实工具"。把它们包成 Day 1 的 Tool

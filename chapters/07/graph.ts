@@ -27,7 +27,20 @@ export type Graph<S> = {
  *   (分支 = 路由根据 state 返回不同节点名;回环 = 路由指回之前的节点。都用同一套机制表达。)
  */
 export async function runGraph<S>(graph: Graph<S>, initial: S, maxSteps = 100): Promise<S> {
-  throw new Error("Lab 7.1 runGraph 尚未实现");
+  let state = initial;
+  let current = graph.start;
+  let steps = 0;
+  while (true) {
+    if (steps++ >= maxSteps) throw new Error(`graph 超过 maxSteps(${maxSteps})——路由可能成环`);
+    const node = graph.nodes[current];
+    if (!node) throw new Error(`未知节点: ${current}`);
+    state = await node(state);
+    const route = graph.routes[current];
+    if (!route) throw new Error(`节点无路由: ${current}`);
+    const next = route(state);
+    if (next === END) return state;
+    current = next;
+  }
 }
 
 /**
@@ -37,7 +50,7 @@ export async function runGraph<S>(graph: Graph<S>, initial: S, maxSteps = 100): 
  *   (这是"一步 fan-out 多个子任务/子 agent,再汇总"的编排原语。)
  */
 export function parallel<S>(branches: NodeFn<S>[], merge: (results: S[]) => S): NodeFn<S> {
-  throw new Error("Lab 7.2 parallel 尚未实现");
+  return async (state) => merge(await Promise.all(branches.map((b) => b(state))));
 }
 
 /**
@@ -56,5 +69,12 @@ export async function reflect<T>(
   ) => { pass: boolean; feedback: string } | Promise<{ pass: boolean; feedback: string }>,
   maxRounds: number,
 ): Promise<{ result: T; rounds: number; passed: boolean }> {
-  throw new Error("Lab 7.3 reflect 尚未实现");
+  let draft = await generate(null);
+  for (let round = 1; round <= maxRounds; round++) {
+    const { pass, feedback } = await critique(draft);
+    if (pass) return { result: draft, rounds: round, passed: true };
+    if (round === maxRounds) return { result: draft, rounds: round, passed: false };
+    draft = await generate(feedback);
+  }
+  return { result: draft, rounds: maxRounds, passed: false };
 }

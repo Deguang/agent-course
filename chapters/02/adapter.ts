@@ -35,7 +35,21 @@ export type Transport = (req: WireRequest) => AsyncIterable<WireChunk>;
  *   tool-result→{role:"tool",tool_call_id} · assistant-final→{role:"assistant"};tools←toolNames。
  */
 export function historyToWire(history: HistoryEntry[], toolNames: string[]): WireRequest {
-  throw new Error("Lab 2.1 historyToWire 尚未实现");
+  const messages: WireMessage[] = history.map((e) => {
+    switch (e.role) {
+      case "user":
+        return { role: "user", content: e.text };
+      case "assistant-tools":
+        return { role: "assistant", content: "", tool_calls: e.calls };
+      case "tool-result":
+        return { role: "tool", content: e.text, tool_call_id: e.id };
+      case "assistant-final":
+        return { role: "assistant", content: e.text };
+      default:
+        throw new Error(`未知的 history role: ${JSON.stringify(e)}`);
+    }
+  });
+  return { messages, tools: toolNames.map((name) => ({ name })) };
 }
 
 /**
@@ -51,14 +65,49 @@ export function historyToWire(history: HistoryEntry[], toolNames: string[]): Wir
  *     组装成 ToolCall[](每个的 args = JSON.parse(该桶buffer 或 "{}"))。
  */
 export async function accumulate(chunks: AsyncIterable<WireChunk>): Promise<Step> {
-  throw new Error("Lab 2.2 accumulate 尚未实现");
+  let text = "";
+  const buckets = new Map<number, { id: string; name: string; argsBuf: string }>();
+  const order: number[] = [];
+
+  for await (const c of chunks) {
+    switch (c.type) {
+      case "text-delta":
+        text += c.text;
+        break;
+      case "tool-call-start":
+        buckets.set(c.index, { id: c.id, name: c.name, argsBuf: "" });
+        order.push(c.index);
+        break;
+      case "tool-call-arg-delta": {
+        const b = buckets.get(c.index);
+        if (b) b.argsBuf += c.argsDelta;
+        break;
+      }
+      case "error":
+        throw new Error(c.message);
+      case "done":
+        if (c.finishReason === "stop") return { kind: "final", text };
+        return {
+          kind: "tool-calls",
+          calls: order.map((i) => {
+            const b = buckets.get(i);
+            if (!b) throw new Error(`丢失的工具桶: ${i}`);
+            return { id: b.id, name: b.name, args: JSON.parse(b.argsBuf || "{}") };
+          }),
+        };
+    }
+  }
+  // 流意外结束(没有 done)——按已累积文本收尾。
+  return { kind: "final", text };
 }
 
 /**
  * Lab 2.3 — 把 transport 包成 Day 1 的 Model(出站→transport→入站),这样 runAgent 一行不改就能驱动它。
  */
 export function makeModel(transport: Transport, toolNames: string[]): Model {
-  throw new Error("Lab 2.3 makeModel 尚未实现");
+  return {
+    step: (history) => accumulate(transport(historyToWire(history, toolNames))),
+  };
 }
 
 /**
@@ -76,7 +125,10 @@ export async function generateObject<T>(
   prompt: string,
   validate: (raw: unknown) => T,
 ): Promise<T> {
-  throw new Error("Lab 2.4 generateObject 尚未实现");
+  const req: WireRequest = { messages: [{ role: "user", content: prompt }], tools: [] };
+  const step = await accumulate(transport(req));
+  const text = step.kind === "final" ? step.text : "";
+  return validate(JSON.parse(text));
 }
 
 // 给 lab 用的小类型别名(仅为可读性)

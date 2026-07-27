@@ -22,7 +22,10 @@ export type Entry = {
  *   提示:按 \n 切;真正"提交"的行都后跟 \n,所以最后一个元素若非空,就是没写完的残留。
  */
 export function recover(jsonl: string): Entry[] {
-  throw new Error("Lab 4.1 recover 尚未实现");
+  if (jsonl === "") return [];
+  // 按 \n 切;最后一个元素要么是 "" (正常结尾)要么是没写完的残留 —— 两种都丢弃。
+  const committed = jsonl.split("\n").slice(0, -1);
+  return committed.filter((line) => line !== "").map((line) => JSON.parse(line) as Entry);
 }
 
 /**
@@ -31,7 +34,18 @@ export function recover(jsonl: string): Entry[] {
  *   (这是"从一棵可分支的历史里,取出当前这条活动对话"的方式。)
  */
 export function pathTo(entries: Entry[], leafId: string): Entry[] {
-  throw new Error("Lab 4.2 pathTo 尚未实现");
+  const byId = new Map(entries.map((e) => [e.id, e]));
+  const path: Entry[] = [];
+  let cur = byId.get(leafId);
+  if (!cur) throw new Error(`未知的叶子 id: ${leafId}`);
+  while (true) {
+    path.push(cur);
+    if (cur.parentId === null) break;
+    const parent = byId.get(cur.parentId);
+    if (!parent) throw new Error(`链条断裂:找不到 parent ${cur.parentId}`);
+    cur = parent;
+  }
+  return path.reverse();
 }
 
 /**
@@ -49,8 +63,14 @@ export class SessionLog {
     this.#write = write;
   }
 
-  async append(_entry: Entry): Promise<void> {
-    throw new Error("Lab 4.3 SessionLog.append 尚未实现");
+  async append(entry: Entry): Promise<void> {
+    if (this.#tainted) throw new Error("writer 已损坏(tainted):拒绝再写");
+    try {
+      await this.#write(`${JSON.stringify(entry)}\n`);
+    } catch (e) {
+      this.#tainted = true;
+      throw e;
+    }
   }
 
   get tainted(): boolean {
