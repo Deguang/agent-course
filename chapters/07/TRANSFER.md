@@ -23,3 +23,8 @@
 
 读一眼 LangGraph.js 的 StateGraph API,和你的 `runGraph` 对比。
 - 预测:它的 node/edge/conditional-edge 分别对应你的什么?你少了哪些工程能力(持久化、并发调度、可视化)?
+
+## 迁移 5 · 并发写共享状态的冲突(生产必答)
+`parallel` 并发多分支后 merge。若两个分支都改共享状态的**同一个键**呢?
+- 预测:就地改共享对象 vs 各分支产出增量再由 merge 合并——哪个能避免数据竞争?
+- 冲突键该"最后写赢"还是"显式合并策略"?这在复杂 State Graph 里是必答题(见 Day 11)。

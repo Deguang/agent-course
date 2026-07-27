@@ -1,6 +1,6 @@
 # 课程总设计 · 两周成为 Agent 专家
 
-完整、可靠、day-by-day 的 agent 课程。**终点:第 11 天(capstone),你能独立设计并开发一个 agent 功能产品。**
+完整、可靠、day-by-day 的 agent 课程。**终点:第 12 天(capstone),你能独立设计并开发一个 agent 功能产品。**
 每天 = 一个完整子系统 + 一个有分量、可运行的 lab(约 2~4 小时)。全程 provider 中立(Vercel AI SDK + MCP + 本地模型),动手全在终端。
 
 ## 贯穿主线:agent 架构的演进(raw → harness → loop → graph)
@@ -73,9 +73,14 @@
 - **交付**:一个评测 runner(独立 prepare/执行/取证/判定)+ 一个 trace 记录器。
 - **对标 2026**:补齐"观测&评测"竖轨(2026 已是一等公民)。
 
-### Day 11 · Capstone · 课程设计(独立做一个 agent 产品)
-- **目标**:综合前 10 天,**独立设计并实现一个 agent 功能产品**。
-- **流程**:① 选题 ② 写一页设计(解决什么、用哪一格 raw/harness/loop/graph、要哪些工具/MCP/RAG、guardrails、成功标准)③ 实现 ④ 用 Day 10 的评测思路自评。
+### Day 11 · 上生产(LLMOps & 服务化)
+- **学到**:服务化(Serverless/Edge/容器 的生命周期与部署考量、有状态 vs 无状态)、流式响应与 Generative UI(概念,前端消费 Day 2 事件流)、**suspend/resume 跨线可恢复**(HITL 端到端)、**CI 评测门禁**(回归/通过率红线,把 Day 10 用起来)、**语义缓存**(主动降本降延迟,复用 Day 8)、并发写冲突约束(补 Day 7)。
+- **交付**:SemanticCache / suspend-resume 令牌 / evalGate;把 loop 服务化的思路。
+- **对标 2026**:补齐"部署工程化(LLMOps)"这最后一层。
+
+### Day 12 · Capstone · 课程设计(独立做一个 agent 产品)
+- **目标**:综合前 11 天,**独立设计并实现一个 agent 功能产品**。
+- **流程**:① 选题 ② 写一页设计(解决什么、用哪一格 raw/harness/loop/graph、要哪些工具/MCP/RAG、guardrails、成功标准)③ 实现 ④ 用 Day 10 的评测思路自评;⑤ **生产健壮性验证**(服务边界 / suspend-resume / CI 门禁,Day 11)。
 - **交付**:能跑的 agent 产品 + 一页设计文档 + 自评报告。
 - **验收判断力**:能说清"为什么这样设计、为什么用/不用 graph、边界与风险在哪"——而不只是"它能跑"。
 
