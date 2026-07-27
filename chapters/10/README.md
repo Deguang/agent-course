@@ -59,6 +59,6 @@ npm run test:10   # 6 个:trace 汇总 / pass / fail / 执行崩=fail / trajecto
 
 ## 六、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):为什么"没报错"不等于"做对了"?trajectory eval 比只看最终答案强在哪(举个"答案对但过程错"的例子)?为什么执行崩要记为 fail 而不是让套件抛出?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么"没报错"不等于"做对了"?trajectory eval 比只看最终答案强在哪(举个"答案对但过程错"的例子)?为什么执行崩要记为 fail 而不是让套件抛出?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——把 Tracer 接进 Day 1 loop(记录每步 model/tool)、用 LLM 当 judge、给你的 coding agent 建一个回归套件、每个 case 重新 prepare 隔离环境。
 - **真检验**:给一个"答案文本正确、但没调该调的工具"的假运行,写一个 trajectory `check` 把它判为 fail——证明你评的是过程不是表象。

@@ -59,6 +59,6 @@ npm run test:06   # 4 个测试:MCP 命名空间+转发 / skill 按需 / 原子�
 
 ## 五、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):MCP 为什么是"防锁定"的投资?为什么没激活的 skill 正文不能进上下文?为什么扩展注册要原子(全或无)?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):MCP 为什么是"防锁定"的投资?为什么没激活的 skill 正文不能进上下文?为什么扩展注册要原子(全或无)?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——接真实 MCP SDK、软链接 realpath 检查、hook 故障隔离(beforeToolCall 归一成配对错误)、多 root 同名 skill 谁胜出。
 - **真检验**:用假 MCP server 接进 Day 1 loop,让 agent 调一个"来自 MCP"的工具,loop 代码一行没为 MCP 改。

@@ -63,6 +63,6 @@ npm run test:07   # 5 个:线性 / 分支 / 回环 / 防跑飞 / 并行
 
 ## 五、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):loop 和 graph 是取代关系还是包含关系?什么信号出现时才值得上 graph?为什么分支和回环能用"同一套路由机制"表达?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):loop 和 graph 是取代关系还是包含关系?什么信号出现时才值得上 graph?为什么分支和回环能用"同一套路由机制"表达?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——把节点做成"跑一个 Day 1 loop 的子 agent"(真多 agent)、可暂停恢复(把 state 存进 Day 4 session)、对照 LangGraph.js。
 - **真检验**:用一个节点包住 Day 1 的 `runAgent`,再用 `runGraph` 编排两个这样的子 agent(一个搜集、一个总结),确认协调逻辑清晰、且每个子 agent 内部仍是普通 loop。
