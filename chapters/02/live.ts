@@ -13,8 +13,8 @@
 // 跑:  GLM_API_KEY=... node chapters/02/live.ts
 
 import { runAgent, type ToolRegistry } from "../01/agent.ts";
-import { makeModel } from "./adapter.ts";
 import type { Transport, WireChunk, WireRequest } from "./adapter.ts";
+import { makeModel } from "./adapter.ts";
 
 // OpenAI 兼容流式响应里我们关心的字段(SSE 每块的形状)。
 type SSEDeltaToolCall = {
