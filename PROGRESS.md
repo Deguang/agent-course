@@ -1,20 +1,20 @@
-# 进度 · 两周成为 agent 专家(11 天 + capstone · 一天一台阶)
+# 进度 · 两周成为 Agent 专家(Day 0 定向 + Day 1–11 + Day 12 Capstone)
 
 | 天/章 | 主题 | 状态 | 预测✓ | 测试绿✓ | 讲回来✓ | 迁移✓ |
 |------|------|------|-------|---------|---------|-------|
-| 00 | Day 0 基础:模型/token/思维链/消息/工具/agent(不写码,~15-20min) | ✅ | ✅ | — | — | — |
-| 01 | Agent Loop 完整版(loop+工具+并发+异常+maxSteps) | 进行中 | ☐ | ☐ | ☐ | ☐ |
-| 02 | 接真实模型+可靠输出(adapter+真流式+结构化返回+错误归一) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 03 | 常用工具集(read/write/edit/glob/grep/bash+3不变量) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 04 | 有状态 & 持久化(session树+JSONL fail-closed:换行=提交/tainted/可分支) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 05 | 上下文管理(按语义组预算投影+compaction+context editing) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 06 | 可扩展性(MCP 集成+skills 按需激活+扩展原子注册/隔离) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 07 | 编排与多 agent(graph+分支/回环/并行+reflect反思+行业命名模式) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 08 | 知识层 RAG/检索(chunk+余弦相似度+向量库+agentic RAG+长期记忆) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 09 | Guardrails & 人在环路(权限allow/ask/deny+HITL+花费步数护栏+注入防御) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 10 | Evals & 可观测(Tracer+runEvalCase/Suite:执行判定分离/失败隔离/trajectory) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 11 | 上生产 LLMOps(语义缓存+suspend/resume+eval门禁+服务化) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 12 | Capstone 课程设计(选题+设计+组装+生产健壮性验证+自评) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 00 | 基础全景(模型 / token / 思维链 / 消息 / 工具 / agent / 演进) | ✅ | ✅ | — | — | — |
+| 01 | Agent Loop(loop + 工具 + 并发 + 异常 + maxSteps) | 进行中 | ☐ | ☐ | ☐ | ☐ |
+| 02 | 接真实模型 & 可靠输出(adapter + 真流式 + 结构化返回 + 错误归一) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 03 | 常用工具集(read/write/edit/glob/grep/bash + 三不变量) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 04 | 有状态 & 持久化(session 树 + JSONL fail-closed) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 05 | 上下文管理(按语义组预算投影 + compaction / context editing) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 06 | 可扩展性(MCP + Skills + 扩展隔离) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 07 | 编排与多 agent(graph + 分支/回环/并行 + reflect + 命名模式) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 08 | 知识层:RAG 检索(chunk + 余弦相似度 + 向量库 + agentic RAG + 长期记忆) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 09 | Guardrails & 人在环路(权限 allow/ask/deny + HITL + 花费护栏 + 注入防御) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 10 | Evals & 可观测(Tracer + trajectory eval + 回归门禁) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 11 | 上生产 LLMOps(语义缓存 + suspend/resume + CI 门禁 + 服务化) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 12 | Capstone 课程设计(独立做一个 agent 产品(含生产健壮性验证)) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 
 > tutor 跨会话读这里:知道学到哪、该回考什么。学员每完成一步自己打勾。
 > 每章 ≈ 2~4 小时(一天一台阶)。一章 = 一个完整子系统 + 一个有分量的 lab。
