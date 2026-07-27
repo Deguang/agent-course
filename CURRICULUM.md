@@ -1,6 +1,6 @@
 # 课程总设计 · 两周成为 Agent 专家
 
-完整、可靠、day-by-day 的 agent 课程。**终点:第 12 天(capstone),你能独立设计并开发一个 agent 功能产品。**
+完整、可靠、day-by-day 的 agent 课程。**终点:Day 12(capstone),你能独立设计并开发一个 agent 功能产品。**
 每天 = 一个完整子系统 + 一个有分量、可运行的 lab(约 2~4 小时)。全程 provider 中立(Vercel AI SDK + MCP + 本地模型),动手全在终端。
 
 ## 贯穿主线:agent 架构的演进(raw → harness → loop → graph)
@@ -18,22 +18,22 @@
 
 ## Day-by-day
 
-### Day 0 · 基础(不写码)
+### Day 0 · 基础全景(不写码)
 - **学到**:LLM 是什么/不是什么、token 与上下文窗口、思维链/推理、消息列表、function calling、agent=模型+工具+循环、何时别用 agent、**演进全景**。
 - **交付**:一张完整心智地图 + 第一个预测。
 - **演进**:全景(raw→graph)。
 
-### Day 1 · Agent Loop(loop 阶段核心)
+### Day 1 · Agent Loop
 - **学到**:model→工具→model 的循环;单次/连续/并发调用;工具异常当数据;maxSteps 防跑飞。
 - **交付**:`runAgent`——能扛完整 loop 的 5 种情况(可运行,5 个测试)。
 - **演进**:loop 诞生。
 
-### Day 2 · 接真实模型(raw → harness)
+### Day 2 · 接真实模型 & 可靠输出(raw → harness)
 - **学到**:先做一次 raw 裸调用感受局限;再建 harness——canonical 消息 IR、流式、provider adapter,用 Vercel AI SDK 接**真/本地模型**,让 Day 1 的 loop 驱动真实模型。provider 中立:换 provider 只动 adapter。
 - **交付**:把 `runAgent` 接到真实模型(Ollama 本地 / BYOK),同一 loop 换模型不改核心。
 - **演进**:raw 的局限 → harness → 喂给 loop。
 
-### Day 3 · 常用工具集(给 agent 长出手脚)
+### Day 3 · 常用工具集
 - **学到**:一套真实、可复用的工具:`read`/`write`/`edit`/`glob`/`grep`/`bash`/`web_fetch`;原子写、超时/取消/截断、workspace 边界(guardrail 不是 OS sandbox);工具设计原则(何时该做成专用工具 vs bash)。
 - **交付**:一个能真正读写文件、跑命令的工具集 + 接进 loop 的 coding agent 雏形。
 - **演进**:loop + 真实工具 = 能干活的 agent。
@@ -48,7 +48,7 @@
 - **交付**:在窗口预算内自动压缩历史、可恢复再压缩。
 - **演进**:让长时运行的 agent 不撑爆上下文。
 
-### Day 6 · 可扩展性(MCP + skills)
+### Day 6 · 可扩展性
 - **学到**:**MCP(重点,开放标准、跨 provider/客户端通用)**——接一个 MCP server 给 agent 加能力;skills 按需激活;扩展的信任边界与故障隔离。
 - **交付**:给 agent 接一个 MCP server + 一个按需 skill。
 - **演进**:agent 的能力从"内置"变"可插拔生态"。
@@ -73,12 +73,12 @@
 - **交付**:一个评测 runner(独立 prepare/执行/取证/判定)+ 一个 trace 记录器。
 - **对标 2026**:补齐"观测&评测"竖轨(2026 已是一等公民)。
 
-### Day 11 · 上生产(LLMOps & 服务化)
+### Day 11 · 上生产 LLMOps
 - **学到**:服务化(Serverless/Edge/容器 的生命周期与部署考量、有状态 vs 无状态)、流式响应与 Generative UI(概念,前端消费 Day 2 事件流)、**suspend/resume 跨线可恢复**(HITL 端到端)、**CI 评测门禁**(回归/通过率红线,把 Day 10 用起来)、**语义缓存**(主动降本降延迟,复用 Day 8)、并发写冲突约束(补 Day 7)。
 - **交付**:SemanticCache / suspend-resume 令牌 / evalGate;把 loop 服务化的思路。
 - **对标 2026**:补齐"部署工程化(LLMOps)"这最后一层。
 
-### Day 12 · Capstone · 课程设计(独立做一个 agent 产品)
+### Day 12 · Capstone 课程设计(独立做一个 agent 产品)
 - **目标**:综合前 11 天,**独立设计并实现一个 agent 功能产品**。
 - **流程**:① 选题 ② 写一页设计(解决什么、用哪一格 raw/harness/loop/graph、要哪些工具/MCP/RAG、guardrails、成功标准)③ 实现 ④ 用 Day 10 的评测思路自评;⑤ **生产健壮性验证**(服务边界 / suspend-resume / CI 门禁,Day 11)。
 - **交付**:能跑的 agent 产品 + 一页设计文档 + 自评报告。
