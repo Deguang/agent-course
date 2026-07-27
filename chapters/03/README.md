@@ -1,6 +1,6 @@
 # Chapter 03 · 常用工具集(给 agent 长出真实手脚)
 
-> 第 3 天 · 目标:实现一套真实、可复用的工具(read/write/edit/glob/grep/bash),掌握三条决定"能用 vs 玩具"的工程不变量;把它们插进 Day 1 的 loop,得到一个能真正读写代码、跑命令的 coding agent 雏形。
+> 目标:实现一套真实、可复用的工具(read/write/edit/glob/grep/bash),掌握三条决定"能用 vs 玩具"的工程不变量;把它们插进 Day 1 的 loop,得到一个能真正读写代码、跑命令的 coding agent 雏形。
 
 Day 1 的工具是"返回假字符串的函数"。今天让它们真的动文件、跑命令——但**真实副作用不可逆,安全和可靠比"能读能写"重要得多**。
 

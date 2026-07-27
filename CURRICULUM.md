@@ -1,6 +1,6 @@
 # 课程总设计 · 两周成为 Agent 专家
 
-完整、可靠、day-by-day 的 agent 课程。**终点:第 8 天,你能独立设计并开发一个 agent 功能产品(capstone)。**
+完整、可靠、day-by-day 的 agent 课程。**终点:第 11 天(capstone),你能独立设计并开发一个 agent 功能产品。**
 每天 = 一个完整子系统 + 一个有分量、可运行的 lab(约 2~4 小时)。全程 provider 中立(Vercel AI SDK + MCP + 本地模型),动手全在终端。
 
 ## 贯穿主线:agent 架构的演进(raw → harness → loop → graph)

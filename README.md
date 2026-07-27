@@ -7,9 +7,9 @@
 一门为**习得**设计的 provider 中立 agent 应用课程 —— 目标是"会 + 懂",不是"照着抄跑出结果"。
 独立于任何 provider(Vercel AI SDK + MCP + 本地模型),动手全在终端。
 
-**节奏:7 章 · 一天一台阶(每章 ≈ 2~4 小时)· 两周冲刺。** 每章 = 一个完整子系统 + 一个有分量的 lab。
+**节奏:11 章 + capstone · 一天一台阶(每章 ≈ 2~4 小时)· 两周冲刺。** 每章 = 一个完整子系统 + 一个有分量的 lab。
 
-**状态:** 🚧 building in public(当前 chapters 00–01)。
+**状态:** 🚧 building in public(chapters 00–11 已建,测试待学员实现)。
 
 ---
 
@@ -84,7 +84,7 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 
 > 第 1 章**零依赖、不要 API key**(测试用确定性脚本模型)。真调模型的章节才引入 SDK / 本地模型 / BYOK。
 
-## 路线(8 天 · 沿 raw→harness→loop→graph 演进)
+## 路线(11 天 + capstone · 沿 raw→harness→loop→graph 演进)
 
 完整课程设计见 [`CURRICULUM.md`](./CURRICULUM.md)。
 
