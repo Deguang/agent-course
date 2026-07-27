@@ -35,7 +35,47 @@ export type Transport = (req: WireRequest) => AsyncIterable<WireChunk>;
  *   tool-result→{role:"tool",tool_call_id} · assistant-final→{role:"assistant"};tools←toolNames。
  */
 export function historyToWire(history: HistoryEntry[], toolNames: string[]): WireRequest {
-  throw new Error("Lab 2.1 historyToWire 尚未实现");
+  const messages: WireMessage[] = []
+  history.forEach(his => {
+    switch (his.role) {
+      case 'user':
+        messages.push({
+          role: 'user',
+          content: his.text
+        })
+        break;
+      case 'assistant-tools':
+        messages.push({
+          role: 'assistant',
+          content: '',
+          tool_calls: his.calls,
+        })
+        break;
+      case 'tool-result':
+        messages.push({
+          role: 'tool',
+          content: his.text,
+          tool_call_id: his.id
+        })
+        break;
+      case 'assistant-final':
+        messages.push({
+          role: "assistant",
+          content: his.text,
+        })
+        break;
+      default:
+        break;
+    }
+  })
+  const tools: WireToolSchema[] = []
+  toolNames.forEach(tool => {
+    tools.push({name: tool})
+  })
+  return {
+    messages,
+    tools,
+  }
 }
 
 /**

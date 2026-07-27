@@ -67,5 +67,68 @@ export async function runAgent(
 ): Promise<AgentResult> {
   const history: HistoryEntry[] = [{ role: "user", text: userText }];
 
-  throw new Error("Lab 1.1 runAgent 尚未实现");
+  let stepCount = 0
+  while(true) {
+    if (stepCount >= maxSteps) {
+      history.push({
+        role: 'assistant-final',
+        text: '超出最大步数'
+      })
+      return {
+        stoppedReason: 'max-steps',
+        finalText: '超出最大步数',
+        history
+      }
+    }
+    stepCount++;
+    const step = await model.step(history);
+
+    if (step.kind === 'final') {
+      history.push({
+        role: 'assistant-final',
+        text: step.text
+      })
+      return {
+        stoppedReason: 'final',
+        finalText: step.text,
+        history
+      }
+    } else if (step.kind === 'tool-calls') {
+      history.push({
+        role: 'assistant-tools',
+        calls: step.calls
+      })
+
+      const calls = step.calls
+      for (const call of calls) {
+        const {id, name} = call
+        const callFn = tools[name]
+        if (!callFn) {
+          history.push({
+            role: 'tool-result',
+            id, name,
+            text: `找不到tool: ${name}`,
+            isError: true
+          })
+        } else {
+          try {
+            const stepResult = await callFn(call.args)
+            history.push({
+              role: 'tool-result',
+              id, name,
+              text: stepResult,
+              isError: false
+            })
+          } catch(e) {
+            history.push({
+              role: 'tool-result',
+              id, name,
+              text: e instanceof Error ? e.message : String(e),
+              isError: true
+            })
+          }
+        }
+      }
+    }
+  }
 }
