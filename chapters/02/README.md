@@ -68,14 +68,36 @@ npm run test:02   # 9 个测试:出站 / 文本流 / 碎片累积 / 交错分桶
 
 ## 七、跑真的(provider 中立收尾)
 
-adapter 用假 transport 测过后,接**真实模型**只需写一个**真 transport**——用 Vercel AI SDK(`ai` + `@ai-sdk/openai-compatible` 等)把 `WireRequest` 发出去、把流式返回转成 `WireChunk`。核心不变:
+adapter 用假 transport 测过后,接**真实模型**只需写一个**真 transport**:把 `WireRequest` 发成一个 OpenAI-兼容的流式请求,再把返回的 SSE 拆成 `WireChunk`。**上层 `accumulate / makeModel / runAgent` 一行不改**——这就是 provider 中立的兑现。
 
-- **本地免费**:[Ollama](https://ollama.com/) 跑开源模型,OpenAI 兼容端点接入——零成本、最 provider 中立。
-- **BYOK**:填自己的 key,换任意 provider。
+本课已备好这个真 transport:[`live.ts`](./live.ts)(`openaiCompatTransport`)。测试全绿后,拿一个**免费 key** 就能驱动真模型:
 
-> ⚠️ 真实 SDK 的确切调用(函数名/参数)请**现查官方文档**再写(见 `AGENT.md`:API 现查实跑、不凭记忆)。tutor 会陪你接通真 transport 并**实跑验证**。
+```bash
+# 1) 先确保 Day 2 测试全绿(live.ts 依赖你实现的 accumulate/makeModel)
+npm run test:02
+# 2) 设一个免费 key(见下表),然后:
+GLM_API_KEY=你的key npm run live:02
+```
 
-做完这节,你就走完 **raw → harness → (Day 1)loop**:同一 loop,换假模型/Ollama/云端,核心都不改。
+跑通后你会看到一条**真实轨迹**:真模型自己提议调 `add` 工具 → 你的 loop 真执行 → 喂回 → 模型收尾。
+
+### 免费 model / key 获取(任选其一)
+
+| Provider | 免费模型 | 拿 key(2 分钟) | 环境变量 | 备注 |
+|---|---|---|---|---|
+| **GLM 智谱** | `glm-4-flash` | [open.bigmodel.cn](https://open.bigmodel.cn/) → 注册 → API Keys | `GLM_API_KEY` | **国内直连、工具支持好 —— 首选** |
+| **Groq** | `llama-3.3-70b-versatile` | [console.groq.com/keys](https://console.groq.com/keys) | `GROQ_API_KEY` | 极快;**部分区域 403** |
+| **Google Gemini** | `gemini-2.0-flash` | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | `GEMINI_API_KEY` | 额度大;国内需自备网络 |
+| **OpenRouter** | 多个 `:free` 模型 | [openrouter.ai/keys](https://openrouter.ai/keys) | `OPENROUTER_API_KEY` | 聚合多家;免费模型工具支持不一 |
+| **Ollama 本地** | `qwen2.5` / `llama3.2` 等 | 无需 key([装 ollama](https://ollama.com/) + `ollama pull qwen2.5`) | `OLLAMA_MODEL` | **零 key、完全离线、零成本** |
+
+`live.ts` 会自动挑环境里存在的那个;换 provider **只是换环境变量**,代码不动。
+
+> 🔒 **密钥安全(务必遵守):** key **只走环境变量**,**绝不写进代码、绝不 commit 进 git**。
+> 别把它贴进聊天/issue/日志;一旦泄露,**先去后台轮换或删除**,再排查。
+> (本仓库 `.gitignore` 已忽略 `.env`;要持久化就放 `.env` 并用 `--env-file` 加载,别硬编码。)
+
+做完这节,你就走完 **raw → harness → (Day 1)loop**:同一 loop,换 GLM/Groq/Ollama/云端,核心都不改。
 
 ---
 
