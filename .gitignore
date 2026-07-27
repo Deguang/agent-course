@@ -1,6 +1,7 @@
 node_modules/
 .env
 .env.*
+!.env.example
 
 # 个人上下文(私密,不进公共课程)
 TUTOR.local.md
