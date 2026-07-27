@@ -39,3 +39,22 @@ export async function runGraph<S>(graph: Graph<S>, initial: S, maxSteps = 100): 
 export function parallel<S>(branches: NodeFn<S>[], merge: (results: S[]) => S): NodeFn<S> {
   throw new Error("Lab 7.2 parallel 尚未实现");
 }
+
+/**
+ * Lab 7.3 — reflect(evaluator-optimizer / 反思模式):生成 → 评审 → 按反馈修订,直到达标或用尽轮数。
+ *   这是主流课(Andrew Ng)与 Anthropic《Building effective agents》都强调的核心 agentic 模式。
+ *   · generate(feedback):产出草稿;第一次 feedback 为 null,之后带上一轮的评审反馈来修订。
+ *   · critique(draft):评审,返回 { pass, feedback }。
+ *   流程:draft = generate(null);最多 maxRounds 轮:critique → pass 就返回;否则 draft = generate(feedback)。
+ *   返回 { result: 最后的草稿, rounds: 实际迭代轮数, passed }。
+ *   (为什么强大?模型第一版常不够好;让它**看着评审意见自我改进**,质量显著提升——这就是"反思"。)
+ */
+export async function reflect<T>(
+  generate: (feedback: string | null) => T | Promise<T>,
+  critique: (
+    draft: T,
+  ) => { pass: boolean; feedback: string } | Promise<{ pass: boolean; feedback: string }>,
+  maxRounds: number,
+): Promise<{ result: T; rounds: number; passed: boolean }> {
+  throw new Error("Lab 7.3 reflect 尚未实现");
+}

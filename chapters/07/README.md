@@ -42,9 +42,26 @@ Day 1 的 loop 很强,但它是**线性、单 agent** 的:问模型→执行工�
 
 判断"该用哪一格"(raw/harness/loop/graph),是这门课给你的核心能力——比会用任何一个框架都值钱。
 
+## 四、行业命名模式:你建的机制,就是这些模式
+
+主流课(Andrew Ng《Agentic AI》)和 Anthropic《Building effective agents》反复讲几个**命名模式**。好消息:**它们全是你已有机制(loop / graph / parallel / eval)的组合**。认得出名字 + 知道底下是什么,你才算"行话流利":
+
+| 模式 | 是什么 | 用你的什么建 |
+|---|---|---|
+| **prompt chaining** | 串行几步,前一步喂后一步 | runGraph 线性 |
+| **routing** | 按输入分流到不同处理 | runGraph 分支(路由按 state 选节点) |
+| **parallelization** | 并发多子任务再汇总 | `parallel` |
+| **orchestrator-workers** | 协调者派活给若干 worker | graph:协调节点 + 多 worker 节点(多 agent) |
+| **evaluator-optimizer(反思 reflection)** | 生成→评审→按反馈修订,迭代改进 | **`reflect`(Lab 7.3)** |
+| **planning** | 先出计划,再逐步执行 | graph:plan 节点产出步骤 → 执行节点依次跑 |
+
+**反思(reflect)** 尤其重要:模型第一版常不够好,让它**看着评审意见自我改进**,质量显著提升。这是你这章第三个要建的。
+
+**判断力照旧:别硬套模式。** 能 prompt chaining 就别 orchestrator-workers;反思很强但每轮都费 token,值不值要看任务。
+
 ---
 
-## 四、你要建的(练习)
+## 五、你要建的(练习)
 
 打开 `graph.ts`:
 
@@ -52,17 +69,19 @@ Day 1 的 loop 很强,但它是**线性、单 agent** 的:问模型→执行工�
 |-----|--|------|
 | 7.1 | `runGraph` | 节点→路由→下一节点,直到 END;分支/回环/**maxSteps 防跑飞** |
 | 7.2 | `parallel` | 并发跑多分支、合并成一个节点 |
+| 7.3 | `reflect` | **反思模式**:生成→评审→修订,直到达标或用尽轮数 |
 
 ```bash
-npm run test:07   # 5 个:线性 / 分支 / 回环 / 防跑飞 / 并行
+npm run test:07   # 8 个:线性 / 分支 / 回环 / 防跑飞 / 并行 / reflect×3
 ```
 
 卡住按 `定位→签名→伪代码→局部` 找 tutor。
 
 ---
 
-## 五、收尾
+## 六、收尾
 
 - **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):loop 和 graph 是取代关系还是包含关系?什么信号出现时才值得上 graph?为什么分支和回环能用"同一套路由机制"表达?
+- **也讲讲**:reflect(反思)为什么能提升质量?它每轮的代价是什么、什么时候不值得?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——把节点做成"跑一个 Day 1 loop 的子 agent"(真多 agent)、可暂停恢复(把 state 存进 Day 4 session)、对照 LangGraph.js。
 - **真检验**:用一个节点包住 Day 1 的 `runAgent`,再用 `runGraph` 编排两个这样的子 agent(一个搜集、一个总结),确认协调逻辑清晰、且每个子 agent 内部仍是普通 loop。

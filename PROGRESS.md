@@ -9,7 +9,7 @@
 | 04 | 有状态 & 持久化(session树+JSONL fail-closed:换行=提交/tainted/可分支) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 05 | 上下文管理(按语义组预算投影+compaction+context editing) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 06 | 可扩展性(MCP 集成+skills 按需激活+扩展原子注册/隔离) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
-| 07 | 编排与多 agent(graph 引擎+分支/回环/并行+何时别上graph) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
+| 07 | 编排与多 agent(graph+分支/回环/并行+reflect反思+行业命名模式) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 08 | 知识层 RAG/检索(chunk+余弦相似度+向量库+agentic RAG+长期记忆) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 09 | Guardrails & 人在环路(权限allow/ask/deny+HITL+花费步数护栏+注入防御) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
 | 10 | Evals & 可观测(Tracer+runEvalCase/Suite:执行判定分离/失败隔离/trajectory) | 就绪待学 | ☐ | ☐ | ☐ | ☐ |
