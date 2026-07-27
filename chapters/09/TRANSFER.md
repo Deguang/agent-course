@@ -1,6 +1,6 @@
 # Chapter 09 · 迁移题(超出本章)
 
-先预测,写进 [`LOG.md`](./LOG.md);想做就自己加测试。
+先预测,写进 [`JOURNAL.md`](../../JOURNAL.md);想做就自己加测试。
 
 ## 迁移 1 · 接进 Day 1 loop
 把 `guardedExecute` 插到 Day 1 loop 执行工具的地方,`BudgetGuard` 插到每轮 step。

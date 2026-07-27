@@ -63,6 +63,6 @@ npm run test:03   # 12 个测试,跑在真实临时目录上(测完自动清理)
 
 ## 六、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):为什么写文件要 temp+rename?为什么 edit 命中多次要报错而不是替换第一个?"workspace 边界是 guardrail 不是 sandbox"——这句话的边界在哪?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么写文件要 temp+rename?为什么 edit 命中多次要报错而不是替换第一个?"workspace 边界是 guardrail 不是 sandbox"——这句话的边界在哪?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——完整 glob 语法、软链接逃逸(realpath 检查)、bash 取消(AbortSignal)、把工具包成 ToolRegistry 接进 loop。
 - **真检验**:用你的工具集 + Day 1 loop + 一个(假或真)模型,让 agent 真的读一个文件并改一行,测试通过。

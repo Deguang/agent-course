@@ -1,6 +1,6 @@
 # Chapter 10 · 迁移题(超出本章)
 
-先预测,写进 [`LOG.md`](./LOG.md);想做就自己加测试。
+先预测,写进 [`JOURNAL.md`](../../JOURNAL.md);想做就自己加测试。
 
 ## 迁移 1 · 把 Tracer 接进 Day 1 loop
 在 loop 每次 model.step / 工具执行处 record 一个 span。跑一次,看 trace 汇总。

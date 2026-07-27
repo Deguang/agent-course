@@ -81,6 +81,6 @@ adapter 用假 transport 测过后,接**真实模型**只需写一个**真 trans
 
 ## 八、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):为什么工具参数碎片"攒齐才 parse、按 index 分桶"?为什么把 provider 隔离在 adapter 后面?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么工具参数碎片"攒齐才 parse、按 index 分桶"?为什么把 provider 隔离在 adapter 后面?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——多 provider 切换、私有能力接缝、usage/成本统计。
 - **真检验**:换一个 provider(Ollama ↔ BYOK),确认 loop 与 canonical 类型一行没改。

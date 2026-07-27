@@ -63,6 +63,6 @@ npm run test:09   # 8 个:allow / deny不执行 / ask批准 / ask拒绝 / allow�
 
 ## 六、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):为什么 agent guardrails 要管"动作"而不只是"文本"?deny 时为什么也要返回配对结果、而不是直接报错中断?可逆性和"该 allow 还是 ask"有什么关系?为什么"高危动作走人工审批"能挡住大部分注入后果?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么 agent guardrails 要管"动作"而不只是"文本"?deny 时为什么也要返回配对结果、而不是直接报错中断?可逆性和"该 allow 还是 ask"有什么关系?为什么"高危动作走人工审批"能挡住大部分注入后果?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——把 `guardedExecute` 接进 Day 1 loop 的工具执行处、按参数(不只工具名)裁决、审计日志、注入红队测试。
 - **真检验**:给 Day 1 loop 的工具执行套上 `guardedExecute`,让一个 `delete_file` 调用触发 ask,模拟用户拒绝,确认文件没被删、且模型收到"被拒"的结果继续。

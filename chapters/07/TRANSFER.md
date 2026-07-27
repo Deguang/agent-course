@@ -1,6 +1,6 @@
 # Chapter 07 · 迁移题(超出本章)
 
-先预测,写进 [`LOG.md`](./LOG.md);想做就自己加测试。
+先预测,写进 [`JOURNAL.md`](../../JOURNAL.md);想做就自己加测试。
 
 ## 迁移 1 · 真·多 agent(节点里跑子 agent)
 

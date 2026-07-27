@@ -71,6 +71,6 @@ npm run test:08   # 6 个测试:切片×3 / 相似度 / 检索 top-k / k 超库�
 
 ## 七、收尾
 
-- **讲回来**([`LOG.md`](./LOG.md)):RAG 为什么能突破"知识冻结"?为什么用语义相似度而不是关键词?agentic RAG(检索当工具)比朴素 RAG(每次都查)好在哪?长期记忆和 session 持久化(Day 4)有什么区别?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):RAG 为什么能突破"知识冻结"?为什么用语义相似度而不是关键词?agentic RAG(检索当工具)比朴素 RAG(每次都查)好在哪?长期记忆和 session 持久化(Day 4)有什么区别?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——接真实 embedding 模型、把 `search_knowledge` 做成工具接进 Day 1 loop(真 agentic RAG)、超长段落的二次细切、混合检索(语义+关键词)。
 - **真检验**:切一篇文档进库,用一个语义相近但用词不同的问题去检索,确认能取回正确片段(而关键词匹配取不到)。
