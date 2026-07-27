@@ -86,7 +86,8 @@ test("bash:跑命令拿到 stdout", async () => {
   assert.equal(r.exitCode, 0);
 });
 test("bash:输出超过上限 → 截断并标 truncated", async () => {
-  const r = await bash("printf 'x%.0s' {1..1000}", { cwd: root, maxOutputBytes: 100 });
+  // 用可移植命令产出 300 字节(避免 bash 花括号展开 {1..N} 在 /bin/sh 下不生效)
+  const r = await bash("head -c 300 /dev/zero | tr '\\0' x", { cwd: root, maxOutputBytes: 100 });
   assert.ok(r.truncated, "应标记截断");
   assert.ok(r.stdout.length <= 100, "输出应被截到上限内");
 });
