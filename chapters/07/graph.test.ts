@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { END, type Graph, parallel, runGraph } from "./graph.ts";
+import { END, type Graph, parallel, reflect, runGraph } from "./graph.ts";
 
 const notStub = (e: unknown) => !/尚未实现/.test(String(e));
 
@@ -72,4 +72,44 @@ test("parallel:并发跑多个分支再合并", async () => {
   );
   const out = await node({});
   assert.deepEqual(out, { a: "A", b: "B" }, "两个分支的结果都合并进来");
+});
+
+// ── 7.3 reflect(evaluator-optimizer / 反思)──
+test("reflect:生成→评审→修订,第 3 版达标 → passed,rounds=3", async () => {
+  let version = 0;
+  const out = await reflect<string>(
+    () => {
+      version += 1;
+      return `v${version}`;
+    },
+    (draft) => ({ pass: draft === "v3", feedback: "还不够好,继续" }),
+    5,
+  );
+  assert.equal(out.passed, true);
+  assert.equal(out.result, "v3");
+  assert.equal(out.rounds, 3);
+});
+
+test("reflect:始终不达标 → 用尽 maxRounds 停下,passed=false", async () => {
+  const out = await reflect<string>(
+    (fb) => `draft(${fb ?? "init"})`,
+    () => ({ pass: false, feedback: "永远不满意" }),
+    3,
+  );
+  assert.equal(out.passed, false);
+  assert.equal(out.rounds, 3);
+});
+
+test("reflect:第一版就达标 → rounds=1,不多迭代", async () => {
+  let gens = 0;
+  const out = await reflect<string>(
+    () => {
+      gens += 1;
+      return "good";
+    },
+    () => ({ pass: true, feedback: "" }),
+    5,
+  );
+  assert.equal(out.rounds, 1);
+  assert.equal(gens, 1, "达标就停,不白生成");
 });
