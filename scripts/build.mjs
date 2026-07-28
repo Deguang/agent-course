@@ -12,6 +12,9 @@ const OUT = "dist";
 const DESC =
   "provider 中立、TypeScript、习得导向的两周 Agent 工程课。沿 raw→harness→loop→graph 演进，12 章从零手写 Agent Loop、工具集、RAG、Guardrails、Evals 到上生产 LLMOps。";
 
+// site.css 内联进每页 <head>：首帧即完整样式,不等外部 CSS → 消除翻页白闪
+const SITE_CSS = await readFile("assets/site.css", "utf8");
+
 // 导航元数据(不是内容;内容全在 README)
 const CH = [
   { n: "00", group: "定向", title: "基础全景:模型、工具、循环", stage: "全景 raw→graph" },
@@ -257,8 +260,9 @@ ${JSON.stringify(jsonld)}
 <script>try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}</script>
 <style>:root{color-scheme:light;background:#faf9f6}@media(prefers-color-scheme:dark){:root{color-scheme:dark;background:#16181c}}:root[data-theme="light"]{color-scheme:light;background:#faf9f6}:root[data-theme="dark"]{color-scheme:dark;background:#16181c}</style>
 <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin />
-<link rel="stylesheet" href="${A}/jinkai.css" />
-<link rel="stylesheet" href="${A}/site.css" />
+<link rel="stylesheet" href="${A}/jinkai.css" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="${A}/jinkai.css" /></noscript>
+<style>${SITE_CSS}</style>
 </head>
 <body>
 <div class="wrap">
