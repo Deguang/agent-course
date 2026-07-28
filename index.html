@@ -91,6 +91,35 @@ const CH = [
 
 if (window.marked) marked.setOptions({ gfm:true, breaks:false });
 
+// README 里的相对链接是相对"文件在仓库里的位置"写的;页面渲染在别的路径上,直接点会解析错。
+// 解析成 GitHub 仓库地址。baseDir 如 "chapters/01/"。
+const REPO = "https://github.com/Deguang/agent-course";
+function resolvePath(baseDir, href){
+  const out = [];
+  for (const part of (baseDir + href).split("/")) {
+    if (part === "" || part === ".") continue;
+    if (part === "..") out.pop();
+    else out.push(part);
+  }
+  return out.join("/");
+}
+function rewriteLinks(host, n){
+  host.querySelectorAll("a[href]").forEach(a => {
+    const raw = a.getAttribute("href") || "";
+    if (raw.startsWith("#")) return;                                  // 页内锚点,留着
+    if (/^([a-z][a-z0-9+.-]*:)?\/\//i.test(raw) || /^mailto:/i.test(raw)) { // 已是绝对/外链
+      a.target = "_blank"; a.rel = "noopener"; return;
+    }
+    const cut = raw.search(/[#?]/);
+    const path = cut === -1 ? raw : raw.slice(0, cut);
+    const tail = cut === -1 ? "" : raw.slice(cut);
+    const resolved = resolvePath(`chapters/${n}/`, path);
+    const isFile = /\.[a-z0-9]+$/i.test(resolved.split("/").pop() || "");
+    a.href = `${REPO}/${isFile ? "blob" : "tree"}/main/${resolved}${tail}`;
+    a.target = "_blank"; a.rel = "noopener";
+  });
+}
+
 // 每章 README 只 fetch 一次
 const cache = {};
 async function loadMd(n){
@@ -130,6 +159,7 @@ function render(n){
       if (window.marked) {
         host.innerHTML = marked.parse(md);
         host.querySelector("h1")?.remove(); // README 的 H1 = 章标题,与上方站点标题重复,去掉
+        rewriteLinks(host, n);              // 相对链接 → 指向 GitHub 仓库文件
       } else {
         host.innerHTML = `<pre>${md.replace(/</g,"&lt;")}</pre>`;
       }
