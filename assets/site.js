@@ -40,23 +40,124 @@ if (navToggle && aside) {
   });
 }
 
-// 点击放大预览:正文图片 + mermaid 流程图
+// 点击放大预览:正文图片 + mermaid 流程图。支持滚轮/双指缩放、拖动平移、双击复位。
 function openLightbox(node) {
   const box = document.createElement("div");
   box.className = "lightbox";
+  const stage = document.createElement("div");
+  stage.className = "lb-stage";
+  const content = document.createElement("div");
+  content.className = "lb-content";
   const clone = node.cloneNode(true);
-  clone.removeAttribute("style"); // 去掉 mermaid 的 max-width 限制,由 lightbox CSS 接管
-  box.appendChild(clone);
-  const close = () => {
+  clone.removeAttribute("style"); // 去掉 mermaid 内联 max-width,由 CSS 接管
+  content.appendChild(clone);
+  stage.appendChild(content);
+  box.appendChild(stage);
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "lb-close";
+  closeBtn.setAttribute("aria-label", "关闭");
+  closeBtn.textContent = "×";
+  box.appendChild(closeBtn);
+
+  const hint = document.createElement("div");
+  hint.className = "lb-hint";
+  hint.textContent = "滚轮 / 双指缩放 · 拖动平移 · 双击复位 · Esc 关闭";
+  box.appendChild(hint);
+  document.body.appendChild(box);
+
+  let scale = 1;
+  let tx = 0;
+  let ty = 0;
+  let pinch = 0;
+  let down = null;
+  let moved = false;
+
+  const apply = () => {
+    content.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  };
+  function zoomAt(factor, cx, cy) {
+    const r = content.getBoundingClientRect();
+    const ns = Math.min(8, Math.max(1, scale * factor));
+    if (ns === 1) {
+      scale = 1;
+      tx = 0;
+      ty = 0;
+    } else {
+      const ratio = ns / scale;
+      tx -= (cx - (r.left + r.width / 2)) * (ratio - 1);
+      ty -= (cy - (r.top + r.height / 2)) * (ratio - 1);
+      scale = ns;
+    }
+    apply();
+  }
+
+  function close() {
     box.remove();
     document.removeEventListener("keydown", onKey);
-  };
+  }
   function onKey(e) {
     if (e.key === "Escape") close();
   }
-  box.addEventListener("click", close);
+
+  stage.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX, e.clientY);
+    },
+    { passive: false },
+  );
+  stage.addEventListener("pointerdown", (e) => {
+    down = { x: e.clientX, y: e.clientY };
+    moved = false;
+    try {
+      stage.setPointerCapture(e.pointerId);
+    } catch (_) {}
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!down || pinch) return;
+    if (Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y) > 4) moved = true;
+    if (scale > 1) {
+      tx += e.clientX - down.x;
+      ty += e.clientY - down.y;
+      down = { x: e.clientX, y: e.clientY };
+      apply();
+    }
+  });
+  stage.addEventListener("pointerup", () => {
+    const wasTap = scale === 1 && !moved;
+    down = null;
+    if (wasTap) close(); // 未缩放时轻点即关闭
+  });
+  stage.addEventListener(
+    "touchmove",
+    (e) => {
+      if (e.touches.length !== 2) return;
+      e.preventDefault();
+      const [a, b] = e.touches;
+      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      if (pinch) zoomAt(d / pinch, (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
+      pinch = d;
+    },
+    { passive: false },
+  );
+  stage.addEventListener("touchend", () => {
+    pinch = 0;
+  });
+  content.addEventListener("dblclick", (e) => {
+    if (scale > 1) {
+      scale = 1;
+      tx = 0;
+      ty = 0;
+      apply();
+    } else {
+      zoomAt(2.2, e.clientX, e.clientY);
+    }
+  });
+  closeBtn.addEventListener("click", close);
   document.addEventListener("keydown", onKey);
-  document.body.appendChild(box);
 }
 document.addEventListener("click", (e) => {
   const svg = e.target.closest(".readme pre.mermaid svg");
