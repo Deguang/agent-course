@@ -41,16 +41,18 @@
 
 一个典型装配(按需取用，不是全都要):
 
-```text
-用户请求
-  → [Day 5] 把完整历史投影进上下文预算
-  → [Day 2] через provider adapter 发给真实模型(可要结构化返回)
-  → [Day 1] loop 编排:模型提议 → 执行工具 → 喂回 → 直到 final
-       工具来自 [Day 3] 工具集 和/或 [Day 6] MCP server;需要私有知识就 [Day 8] RAG 检索
-       高危工具走 [Day 9] guardrails 审批/花费护栏
-  → [Day 4] 把这轮新增的事实追加进 session(可恢复)
-  → (若任务复杂)用 [Day 7] graph 把多个上面这样的 loop 编排起来
-  → 用 [Day 10] evals 给它建回归套件 + trace,别凭感觉
+```mermaid
+flowchart TD
+  U[用户请求] --> D5["Day 5:把完整历史投影进上下文预算"]
+  D5 --> D2["Day 2:provider adapter 发给真实模型(可要结构化返回)"]
+  D2 --> D1["Day 1:loop 编排 — 提议 → 执行工具 → 喂回 → 直到 final"]
+  D1 -. 工具 .-> D3["Day 3:工具集"]
+  D1 -. 工具 .-> D6["Day 6:MCP server"]
+  D1 -. 私有知识 .-> D8["Day 8:RAG 检索"]
+  D1 -. 高危工具 .-> D9["Day 9:guardrails 审批/花费护栏"]
+  D1 --> D4["Day 4:把新增事实追加进 session(可恢复)"]
+  D4 --> D7["Day 7:graph 编排多个 loop(若任务复杂)"]
+  D7 --> D10["Day 10:evals 回归套件 + trace"]
 ```
 
 - **最小可用**:很多产品只需要 Day 1 loop + Day 3 工具 + Day 2 真实模型。**先把最小闭环跑通**，再按需加 4/5/6/7。
