@@ -126,7 +126,14 @@ function render(n){
   if (!host || host.dataset.loaded) return;
   host.dataset.loaded = "1";
   loadMd(n)
-    .then(md => { host.innerHTML = window.marked ? marked.parse(md) : `<pre>${md.replace(/</g,"&lt;")}</pre>`; })
+    .then(md => {
+      if (window.marked) {
+        host.innerHTML = marked.parse(md);
+        host.querySelector("h1")?.remove(); // README 的 H1 = 章标题,与上方站点标题重复,去掉
+      } else {
+        host.innerHTML = `<pre>${md.replace(/</g,"&lt;")}</pre>`;
+      }
+    })
     .catch(e => {
       host.dataset.loaded = "";
       host.innerHTML = `<p class="loading">无法载入 <code>chapters/${n}/README.md</code>(${e.message})。`
