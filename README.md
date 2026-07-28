@@ -105,3 +105,14 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 > Day 8–11(RAG / Guardrails / Evals / LLMOps)是对照 2026 行业主流栈补齐的"生产必备"层。
 
 进度见 `PROGRESS.md`。内容以各章 `README.md` 为准(`index.html` 只是站点雏形预览)。
+
+## 许可 / License
+
+本仓库**双协议**——代码归代码,内容归内容:
+
+- **代码**(`chapters/**/*.ts`、`index.html`、配置等)—— [MIT](./LICENSE)。
+- **课程内容**(`README` / `CURRICULUM` / 各章 `README.md` 等文字、教学材料)—— [CC BY-NC 4.0](./LICENSE-CONTENT):可自由学习、改编、再分发,**须署名**、**不得商用**。
+
+引用内容时的署名示例:
+
+> 《两周成为 Agent 专家》© 2026 Deguang,依 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) 授权。
