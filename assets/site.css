@@ -167,11 +167,7 @@ aside .icon-btn svg {
   height: 15px;
   flex: 0 0 auto;
 }
-aside #theme-toggle {
-  flex: 1 1 auto;
-}
 aside .icon-btn.gh {
-  flex: 0 0 auto;
   padding: 7px 10px;
 }
 /* GitHub 是实心 16-viewBox,同尺寸下比描边 24-viewBox 的 feather 图标显大,缩一点对齐光学尺寸 */
