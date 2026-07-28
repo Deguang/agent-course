@@ -32,6 +32,15 @@ Day 1 的 loop 很强，但它是**线性、单 agent** 的:问模型→执行�
 
 `runGraph`(Lab 7.1)就是执行这张图的引擎;`parallel`(Lab 7.2)是"一步并发多分支再汇总"的原语。这其实就是 LangGraph 这类框架的内核——**你亲手写一遍，就知道 graph 框架底下是什么。**
 
+```mermaid
+flowchart LR
+  S(["state"]):::io --> N1["节点 A:state → 新 state"]:::sub
+  N1 --> R{"路由:看 state 决定去哪"}:::model
+  R -->|分支| N2["节点 B"]:::sub
+  R -->|回环 + maxSteps| N1
+  R -->|END| E(["结束"]):::io
+```
+
 ## 三、关键判断:别过度上 graph
 
 > ★ 不是越靠右(越接近 graph)越好。能单 loop 就别上 graph —— 和"能一次调用就别 agent"同一种克制。★

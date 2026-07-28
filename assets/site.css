@@ -423,6 +423,9 @@ footer a {
   }
   main {
     padding: var(--space-6) var(--space-5);
+    font-size: 17px;
+  }
+  nav a {
     font-size: 16px;
   }
 }
