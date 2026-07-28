@@ -33,7 +33,14 @@
     securityLevel: "strict",
     fontFamily: cssVar("--font-body") || "serif",
     theme: "base",
-    flowchart: { curve: "basis", nodeSpacing: 48, rankSpacing: 58, padding: 12, useMaxWidth: true },
+    flowchart: {
+      curve: "basis",
+      nodeSpacing: 80,
+      rankSpacing: 100,
+      padding: 22,
+      diagramPadding: 20,
+      useMaxWidth: true,
+    },
     themeVariables: {
       background: "transparent",
       primaryColor: cssVar("--card"),
@@ -41,7 +48,7 @@
       primaryTextColor: cssVar("--fg"),
       lineColor: cssVar("--muted"),
       textColor: cssVar("--fg"),
-      fontSize: "15px",
+      fontSize: "16px",
     },
   });
 
