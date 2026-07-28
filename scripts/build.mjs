@@ -2,7 +2,9 @@
 // 单一真源仍是各 README;此脚本在构建期(本地或 CI)把它们渲染进模板。改 README → 重跑此脚本 → 页面自动同步。
 //   用法:node scripts/build.mjs   输出到 dist/
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import hljs from "highlight.js";
 import { marked } from "marked";
+import { markedHighlight } from "marked-highlight";
 
 const SITE = "https://app.lideguang.com/agent-course"; // 部署基址(自定义域子路径)
 const REPO = "https://github.com/Deguang/agent-course";
@@ -105,6 +107,17 @@ const CH = [
 ];
 
 marked.setOptions({ gfm: true, breaks: false });
+// 构建期代码高亮(highlight.js);颜色由 CSS 变量随主题切换,运行时零 JS。
+marked.use(
+  markedHighlight({
+    emptyLangClass: "hljs",
+    langPrefix: "hljs language-",
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : "plaintext";
+      return hljs.highlight(code, { language }).value;
+    },
+  }),
+);
 
 const esc = (s) =>
   String(s)
@@ -167,11 +180,16 @@ function extractDesc(md) {
   return s.length > 150 ? `${s.slice(0, 147)}…` : s;
 }
 
-const THEME_BTNS = `
-    <div class="theme" id="theme">
-      <button data-mode="light" title="亮色" aria-label="亮色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>亮</button>
-      <button data-mode="dark" title="暗色" aria-label="暗色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>暗</button>
-      <button data-mode="system" title="跟随系统" aria-label="跟随系统"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>跟随</button>
+// 底部动作区:单按钮循环切换主题(图标随当前态显示) + GitHub 入口
+const ACTIONS = `
+    <div class="actions">
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题(亮/暗/跟随系统)">
+        <svg class="i-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="i-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+        <svg class="i-system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <span class="theme-label"></span>
+      </button>
+      <a class="icon-btn gh" href="${REPO}" target="_blank" rel="noopener" aria-label="GitHub 仓库" title="GitHub 仓库"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
     </div>`;
 
 function navList(base, active) {
@@ -230,7 +248,7 @@ ${JSON.stringify(jsonld)}
 <div class="wrap">
   <aside>
     <div class="brand"><a class="home" href="${home}"><h1>动手学 Agent</h1></a><div class="sub">provider 中立 · TS · 习得导向</div></div>
-    <nav>${navList(base, active)}</nav>${THEME_BTNS}
+    <nav>${navList(base, active)}</nav>${ACTIONS}
     <div class="lic">
       <strong>许可</strong><br>
       代码 <a href="${REPO}/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> · 内容 <a href="${REPO}/blob/main/LICENSE-CONTENT" target="_blank" rel="noopener">CC BY-NC 4.0</a><br>
