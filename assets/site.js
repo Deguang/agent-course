@@ -29,3 +29,38 @@ if (toggle) {
     applyTheme(MODES[(MODES.indexOf(currentMode()) + 1) % MODES.length]);
   });
 }
+
+// 移动端:汉堡按钮折叠/展开导航
+const navToggle = document.querySelector(".nav-toggle");
+const aside = document.querySelector("aside");
+if (navToggle && aside) {
+  navToggle.addEventListener("click", () => {
+    const open = aside.classList.toggle("nav-open");
+    navToggle.setAttribute("aria-expanded", String(open));
+  });
+}
+
+// 点击放大预览:正文图片 + mermaid 流程图
+function openLightbox(node) {
+  const box = document.createElement("div");
+  box.className = "lightbox";
+  const clone = node.cloneNode(true);
+  clone.removeAttribute("style"); // 去掉 mermaid 的 max-width 限制,由 lightbox CSS 接管
+  box.appendChild(clone);
+  const close = () => {
+    box.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  function onKey(e) {
+    if (e.key === "Escape") close();
+  }
+  box.addEventListener("click", close);
+  document.addEventListener("keydown", onKey);
+  document.body.appendChild(box);
+}
+document.addEventListener("click", (e) => {
+  const svg = e.target.closest(".readme pre.mermaid svg");
+  const img = e.target.closest(".readme img");
+  if (svg) openLightbox(svg);
+  else if (img) openLightbox(img);
+});
