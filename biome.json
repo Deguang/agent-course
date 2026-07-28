@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!package-lock.json"]
+    "includes": ["**", "!package-lock.json", "!assets/jinkai.css", "!dist", "!**/*.svg"]
   },
   "formatter": {
     "enabled": true,
@@ -23,6 +23,9 @@
         "noUnusedFunctionParameters": "off",
         "noUnusedVariables": "off",
         "noUnusedPrivateClassMembers": "off"
+      },
+      "style": {
+        "noDescendingSpecificity": "off"
       }
     }
   },

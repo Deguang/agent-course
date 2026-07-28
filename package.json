@@ -26,11 +26,12 @@
     "test:09": "node --test chapters/09/guardrails.test.ts",
     "test:10": "node --test chapters/10/eval.test.ts",
     "test:11": "node --test chapters/11/prod.test.ts",
-    "live:02": "node chapters/02/live.ts"
+    "build:site": "node scripts/build.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.5",
     "@types/node": "^26.1.1",
+    "marked": "^12.0.2",
     "typescript": "^7.0.2"
   }
 }
