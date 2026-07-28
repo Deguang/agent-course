@@ -320,6 +320,24 @@ footer a {
 .readme img {
   max-width: 100%;
 }
+/* mermaid 流程图:透明融进正文、居中;渲染前藏源码避免闪现文本 */
+.readme pre.mermaid {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: var(--space-6) 0;
+  text-align: center;
+  font-family: var(--font-body);
+  line-height: var(--line-height-normal);
+  overflow-x: auto;
+}
+.readme pre.mermaid:not([data-processed]) {
+  color: transparent;
+}
+.readme pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
 
 @media (max-width: 720px) {
   .wrap {
