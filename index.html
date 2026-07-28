@@ -8,6 +8,10 @@
   // 提前应用主题,避免刷新闪白/闪暗
   try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}
 </script>
+<!-- 仓耳今楷 web 字体(unicode-range 分片 woff2,按需下载;字体名 TsangerJinKai02 已在 --font-fallback 首位)。
+     字体文件走阿里 CDN;取不到会优雅降级回系统楷体 STKaiti/KaiTi。CSS 自托管,源自 https://weekly.tw93.fun/fonts/jinkai.css -->
+<link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin />
+<link rel="stylesheet" href="assets/jinkai.css" />
 <style>
   :root {
     /* 颜色(纯亮色) */
