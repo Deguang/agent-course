@@ -3,7 +3,43 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>动手学 Agent</title>
+<title>动手学 Agent · 两周成为 Agent 专家(provider 中立 · TypeScript)</title>
+<meta name="description" content="provider 中立、TypeScript、习得导向的两周 Agent 工程课。沿 raw→harness→loop→graph 演进,12 章从零手写 Agent Loop、工具集、RAG、Guardrails、Evals 到上生产 LLMOps。" />
+<meta name="author" content="Deguang" />
+<meta name="keywords" content="AI Agent,LLM Agent,agent loop,RAG,MCP,Guardrails,Evals,LLMOps,TypeScript,provider 中立,大模型应用,教程" />
+<link rel="canonical" href="https://app.lideguang.com/agent-course/" />
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="assets/favicon.svg" />
+<!-- Open Graph / 社交分享预览 -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="动手学 Agent" />
+<meta property="og:title" content="动手学 Agent · 两周成为 Agent 专家" />
+<meta property="og:description" content="provider 中立、TypeScript、习得导向的两周 Agent 工程课。raw→harness→loop→graph,12 章从零手写到上生产。" />
+<meta property="og:url" content="https://app.lideguang.com/agent-course/" />
+<meta property="og:image" content="https://app.lideguang.com/agent-course/assets/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="动手学 Agent · 两周成为 Agent 专家" />
+<meta name="twitter:description" content="provider 中立、TypeScript、习得导向的两周 Agent 工程课。raw→harness→loop→graph,12 章从零手写到上生产。" />
+<meta name="twitter:image" content="https://app.lideguang.com/agent-course/assets/og.png" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "动手学 Agent · 两周成为 Agent 专家",
+  "description": "provider 中立、TypeScript、习得导向的两周 Agent 工程课。沿 raw→harness→loop→graph 演进,12 章从零手写 Agent Loop、工具集、RAG、Guardrails、Evals 到上生产 LLMOps。",
+  "url": "https://app.lideguang.com/agent-course/",
+  "inLanguage": "zh-CN",
+  "provider": { "@type": "Person", "name": "Deguang" },
+  "teaches": ["Agent Loop", "provider adapter", "工具集", "上下文管理", "MCP", "多 agent 编排 graph", "RAG 检索", "Guardrails", "Evals 可观测", "LLMOps"],
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+}
+</script>
 <script>
   // 提前应用主题,避免刷新闪白/闪暗
   try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}
@@ -95,6 +131,28 @@
 </style>
 </head>
 <body>
+<noscript>
+  <div style="max-width:820px;margin:40px auto;padding:0 20px;line-height:1.7;">
+    <h1>动手学 Agent · 两周成为 Agent 专家</h1>
+    <p>provider 中立 · TypeScript · 习得导向的动手课。沿 <strong>raw → harness → loop → graph</strong> 演进,12 章从零手写 Agent Loop、工具集、RAG、Guardrails、Evals 到上生产 LLMOps。本站需 JavaScript 渲染各章正文;以下目录直达仓库正文:</p>
+    <ul>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/00/README.md">Chapter 00 · 基础全景:模型、工具、循环</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/01/README.md">Chapter 01 · agent 的心脏:一个 loop</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/02/README.md">Chapter 02 · 接真实模型 & 可靠输出</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/03/README.md">Chapter 03 · 常用工具集</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/04/README.md">Chapter 04 · 有状态 & 持久化</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/05/README.md">Chapter 05 · 上下文管理</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/06/README.md">Chapter 06 · 可扩展性:MCP · Skills</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/07/README.md">Chapter 07 · 编排与多 agent</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/08/README.md">Chapter 08 · 知识层:RAG / 检索</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/09/README.md">Chapter 09 · Guardrails & 人在环路</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/10/README.md">Chapter 10 · Evals & 可观测</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/11/README.md">Chapter 11 · 上生产:LLMOps & 服务化</a></li>
+      <li><a href="https://github.com/Deguang/agent-course/blob/main/chapters/12/README.md">Chapter 12 · Capstone:独立做一个 agent 产品</a></li>
+    </ul>
+    <p>源码与完整课程:<a href="https://github.com/Deguang/agent-course">github.com/Deguang/agent-course</a></p>
+  </div>
+</noscript>
 <div class="wrap">
   <aside>
     <div class="brand">
