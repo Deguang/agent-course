@@ -9,23 +9,38 @@
   @media (prefers-color-scheme: dark) { :root { --bg:#16181c; --fg:#e6e6e6; --muted:#9aa0a6; --accent:#e08a5a; --line:#2c2f36; --card:#1e2126; } }
   * { box-sizing:border-box; }
   body { margin:0; font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--fg); background:var(--bg); }
-  .wrap { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
-  aside { border-right:1px solid var(--line); padding:24px 18px; }
+  .wrap { display:grid; grid-template-columns:248px 1fr; min-height:100vh; }
+  aside { border-right:1px solid var(--line); padding:24px 16px; position:sticky; top:0; align-self:start; max-height:100vh; overflow-y:auto; }
   aside h1 { font-size:15px; margin:0 0 4px; }
-  aside .sub { color:var(--muted); font-size:12px; margin-bottom:20px; }
-  nav a { display:block; padding:8px 10px; border-radius:8px; color:var(--fg); text-decoration:none; font-size:14px; }
+  aside .sub { color:var(--muted); font-size:12px; margin-bottom:18px; }
+  nav .group { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin:16px 10px 4px; }
+  nav a { display:block; padding:7px 10px; border-radius:8px; color:var(--fg); text-decoration:none; font-size:14px; }
+  nav a:hover { background:color-mix(in srgb, var(--fg) 6%, transparent); }
   nav a.active { background:color-mix(in srgb, var(--accent) 15%, transparent); color:var(--accent); font-weight:600; }
-  nav .soon { color:var(--muted); padding:8px 10px; font-size:14px; }
-  main { padding:40px 48px; max-width:760px; }
-  h2 { margin-top:0; }
+  nav a .n { color:var(--muted); font-variant-numeric:tabular-nums; margin-right:8px; }
+  nav a.active .n { color:var(--accent); }
+  main { padding:40px 48px; max-width:780px; }
+  h2 { margin:0 0 4px; }
+  .meta { color:var(--muted); font-size:12.5px; margin:0 0 20px; display:flex; gap:14px; flex-wrap:wrap; }
+  .meta .tag { border:1px solid var(--line); border-radius:999px; padding:2px 10px; }
   .inv { border-left:3px solid var(--accent); background:var(--card); padding:12px 16px; border-radius:0 8px 8px 0; margin:20px 0; }
-  code, pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
-  pre { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:13px; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.88em; background:color-mix(in srgb, var(--fg) 7%, transparent); padding:1px 5px; border-radius:5px; }
+  pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:13px; }
+  pre code { background:none; padding:0; }
   .gate { border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; margin:24px 0; }
   .gate summary { cursor:pointer; font-weight:600; color:var(--accent); }
   .gate[open] summary { margin-bottom:12px; }
-  .step { color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.04em; margin:28px 0 6px; }
+  .step { color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.04em; margin:26px 0 6px; }
+  ul.labs { list-style:none; padding:0; margin:10px 0; }
+  ul.labs li { padding:6px 0; border-top:1px solid var(--line); font-size:14px; }
+  ul.labs li:first-child { border-top:none; }
   footer { color:var(--muted); font-size:12px; margin-top:48px; border-top:1px solid var(--line); padding-top:16px; }
+  a.src { color:var(--accent); }
+  @media (max-width:720px) {
+    .wrap { grid-template-columns:1fr; }
+    aside { position:static; max-height:none; border-right:none; border-bottom:1px solid var(--line); }
+    main { padding:28px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -33,46 +48,201 @@
   <aside>
     <h1>动手学 Agent</h1>
     <div class="sub">provider 中立 · TS · 习得导向</div>
-    <nav>
-      <a href="#00">00 · 什么是 agent</a>
-      <a class="active" href="#01">01 · agent 的心脏:loop</a>
-      <span class="soon">02–11 · 陆续解锁</span>
-    </nav>
+    <nav id="nav"></nav>
   </aside>
-  <main>
-    <h2>Chapter 01 · agent 的心脏:一个 loop</h2>
-    <p>把模型想成一个<strong>很聪明、但手脚被绑住</strong>的助理:能想、能说,却读不了文件、跑不了命令。
-       它只能<strong>提议</strong>"帮我读 README",真去执行、把结果递回去、再问它下一步的,是屋外那个人——
-       <strong>agent loop</strong>。这一章你就写这个人。</p>
-
-    <div class="inv">
-      <strong>一句要记住的:</strong> 模型只会「提议」,执行永远是 loop 的事。
-      模型说"调用 read"不代表文件被读了——真去读、把结果塞回对话、再叫模型继续的,是<strong>你写的 loop</strong>。
-      对任何 provider 都成立。
-    </div>
-
-    <div class="step">① 先观察</div>
-    <p>先别写代码。跑 <code>npm run demo:01</code>,把一次完整运行"看见"——尤其看清"模型提议"和"loop 执行"的区别。</p>
-    <div class="step">② 预测闸门</div>
-    <p>看完 demo,把预测写进 <code>chapters/01/LOG.md</code>。答完再展开正文 —— 先押注,才学得到。</p>
-    <details class="gate">
-      <summary>我已看过 demo、在 LOG.md 写下预测,展开正文</summary>
-      <div class="step">③ 空白构建</div>
-      <p>实现 <code>chapters/01/agent.ts</code> 里的 <code>runAgent</code>(现在它抛
-         <code>Lab 1.1 尚未实现</code>)。失败测试 <code>agent.test.ts</code> 就是规格,让它变绿:</p>
-      <pre>npm run test:01</pre>
-      <p>第一次应看到 <code>Lab 1.1 runAgent 尚未实现</code> —— 那是起点。卡住找 tutor,按
-         <code>定位→签名→伪代码→局部</code> 逐级要提示,别直接要完整答案。</p>
-      <div class="step">③ 讲回来</div>
-      <p>测试绿后,在 <code>LOG.md</code> 用自己的话讲清:为什么执行工具的是 loop 不是模型?</p>
-      <div class="step">④ 迁移题</div>
-      <p>做 <code>chapters/01/TRANSFER.md</code>:并发工具 / 工具抛异常 / 防跑飞。</p>
-    </details>
-
-    <footer>
-      动手全在终端;本页只做阅读 · 导航 · 预测闸门。真正的习得发生在你写 <code>agent.ts</code> 的时候。
-    </footer>
-  </main>
+  <main id="main"></main>
 </div>
+
+<script>
+// 薄壳:每章只做「阅读 · 导航 · 预测闸门」。真正内容在 chapters/NN/README.md,真正习得在你写代码时。
+// 单一真源:这里只放钩子 + 不变量 + 闸门流程 + 命令,不重抄 lab 细节(防漂移)。
+const GATE = "我已读过正文、在 JOURNAL.md 写下预测,展开动手区";
+
+const CH = [
+  { n:"00", group:"定向", title:"基础全景:模型、工具、循环", stage:"全景 raw→graph", concept:true,
+    hook:`动手前先打全地基。<strong>不写代码</strong>,约 15~20 分钟,建立六个概念——LLM 是什么、怎么"读"和"想"、"对话"在代码里长什么样、工具怎么接、agent 到底是什么。后面每章都建在它们之上。`,
+    inv:`LLM 的本质是"下一个词预测器";<strong>agent = 模型(想)+ 工具(手脚)+ 循环(反复想→做)</strong>。`,
+    teach:`用自己的话说清:agent = 模型 + 工具 + 循环,这三者各自负责什么?为什么缺一不可?` },
+
+  { n:"01", group:"主线 · loop", title:"agent 的心脏:一个 loop", stage:"loop 诞生", file:"agent.ts", tests:5,
+    hook:`把模型想成一个<strong>很聪明、但手脚被绑住</strong>的助理:能想、能说,却读不了文件、跑不了命令。它只能<strong>提议</strong>"帮我读 README",真去执行、把结果递回去、再问它下一步的,是屋外那个人——<strong>agent loop</strong>。这一章你就写这个人。`,
+    inv:`模型只会「提议」,执行永远是 loop 的事。模型说"调用 read"不代表文件被读了——真去读、把结果塞回对话、再叫模型继续的,是<strong>你写的 loop</strong>。对任何 provider 都成立。`,
+    observe:`跑 <code>npm run demo:01</code>,把一次完整运行"看见"——尤其看清"模型提议"和"loop 执行"的区别。`,
+    labs:[["runAgent",`扛完整 loop 的 5 种情况:单次调用 → 连续调用 → 并发调用 → 工具异常当数据 → maxSteps 防跑飞`]],
+    teach:`为什么执行工具的是 loop 不是模型?"工具抛异常"为什么当成数据喂回去、而不是让 loop 崩?` },
+
+  { n:"02", group:"主线 · loop", title:"接真实模型 & 可靠输出", stage:"raw → harness", file:"adapter.ts", tests:9,
+    hook:`Day 1 用假模型验证了 loop。今天接真实模型,且接得"干净、可靠":造一个翻译层(provider adapter),让 <code>runAgent</code> <strong>一行不改</strong>就能驱动真模型;掌握三件必备——<strong>真流式累积、结构化返回、错误归一</strong>。走完演进前两格 raw → harness。`,
+    inv:`★ 核心(loop、canonical 类型)永远不认识任何 provider;provider 的脏细节全部止步于 adapter。换一家 = 只换 adapter/transport,loop 与 canonical <strong>一行不动</strong>。`,
+    observe:`读正文的三层模型(canonical ⇄ adapter ⇄ wire)。想真跑:填好 <code>.env</code>(见 <code>.env.example</code>)后 <code>npm run live:02</code> 用免费 key 端到端跑通。`,
+    labs:[
+      ["historyToWire","出站映射:canonical history + 工具名 → wire 请求"],
+      ["accumulate","真流式(硬骨头):碎片按 index 分桶、攒齐才 parse、错误归一"],
+      ["makeModel","把 transport 包成 Day 1 的 Model,loop 直接驱动"],
+      ["generateObject","结构化返回 + 校验失败抛清晰错误"]],
+    teach:`换一家 provider 时哪些代码会动、哪些一行不改?为什么 wire↔canonical 的翻译只该发生在 adapter 这一层?` },
+
+  { n:"03", group:"给 loop 长手脚", title:"常用工具集", stage:"loop + 真实工具", file:"tools.ts", tests:12,
+    hook:`Day 1 的工具是"返回假字符串的函数"。今天让它们真的动文件、跑命令——read/write/edit/glob/grep/bash——得到一个能真正读写代码的 coding agent 雏形。但<strong>真实副作用不可逆,安全和可靠比"能读能写"重要得多</strong>。`,
+    inv:`三条决定"能用 vs 玩具"的工程不变量:<strong>原子写</strong>(temp+rename)· <strong>超时杀进程 + 输出截断</strong> · <strong>workspace 边界</strong>(挡 <code>../</code> 逃逸,是 guardrail 不是 OS sandbox)。`,
+    labs:[
+      ["resolveInWorkspace","边界:挡 ../ 逃逸(其他工具都先过它)"],
+      ["read / write / edit","过边界读 · 原子写 · 精确替换恰好一次"],
+      ["glob / grep","递归 + 后缀过滤 · 递归逐行正则(路径+行号+行)"],
+      ["bash","超时杀进程 + 输出截断"]],
+    teach:`为什么 write 要"原子"、bash 要"超时+截断"、路径要过边界?这三条各挡住什么真实事故?哪些动作该做专用工具、哪些交给 bash?` },
+
+  { n:"04", group:"给 loop 长手脚", title:"有状态 & 持久化", stage:"loop 长期运行", file:"session.ts", tests:8,
+    hook:`前三天的 loop 每次跑完记忆就没了。今天给它一个可靠的"记忆"——而"可靠"在这里有非常具体、反直觉的含义:状态由事件归约得来,历史是一棵只追加、可分支、可恢复的树。`,
+    inv:`把历史做成一棵<strong>只追加、可分支、fail-closed</strong> 的持久事实树。<strong>已发生的事实不可抹除</strong>;写失败即 tainted,从此拒绝再写(宁可停,不可写脏)。`,
+    labs:[
+      ["recover","JSONL → Entry[];丢弃结尾没换行的残留(换行=提交)"],
+      ["pathTo","从树里取「根→某叶子」的活动路径;断链/未知 id 报错"],
+      ["SessionLog","只追加;写失败即 tainted、从此拒绝再写"]],
+    teach:`为什么"已发生的事实不可抹除"?fail-closed 在防什么样的静默损坏?为什么状态该由事件 reduce、而不是到处改变量?` },
+
+  { n:"05", group:"给 loop 长手脚", title:"上下文管理", stage:"喂得进窗口", file:"context.ts", tests:5,
+    hook:`Day 4 让 agent 能可靠"记住一切"。但"记住一切"会撞上 Day 0 的硬墙:<strong>上下文窗口有限</strong>。今天学怎么"花着用"这份预算——按语义组、有预算地投影,再加 compaction / context editing。`,
+    inv:`<strong>完整历史(持久、不删)≠ 投影给模型的上下文(有损、可重算)。</strong>你压缩的是"喂给模型的那份",不是磁盘上的事实。切分按语义组,绝不切半组。`,
+    labs:[
+      ["groupInteractions","按 user 切成原子交互组"],
+      ["projectWithinBudget","从新往旧留整组;最新组超预算 → 保留整组 + overflow"]],
+    teach:`"完整历史"和"投影给模型的上下文"为什么必须分开?你压缩的是哪一份?为什么投影要以"整组"为单位、不能切半组?` },
+
+  { n:"06", group:"给 loop 长手脚", title:"可扩展性:MCP · Skills · 隔离", stage:"能力可插拔", file:"extensions.ts", tests:4,
+    hook:`前几天工具都是你手写的。真实世界里能力来自一个<strong>生态</strong>:GitHub、数据库、浏览器…… 都有现成服务可接。今天学怎么"接",且接得安全、省 token——重点是 <strong>MCP</strong> 这个开放标准。`,
+    inv:`MCP 是工具的"通用插头"——一个标准接口,<strong>跨 provider、跨客户端通用</strong>,是回报最高的防锁定投资。扩展注册要<strong>原子</strong>:全过才提交,抛错则 target 不变。`,
+    labs:[
+      ["mcpToolRegistry","把 MCP 工具加命名空间包成 ToolRegistry、转发调用"],
+      ["buildSkillContext","全部露描述,只有激活的带正文(按需省 token)"],
+      ["registerExtension","原子:暂存跑 factory,全过才提交;抛错则回滚"]],
+    teach:`MCP 为什么是"回报最高的防锁定投资"?扩展注册为什么要"原子"?skill 为什么"露描述、按需才带正文"?` },
+
+  { n:"07", group:"主线 · graph", title:"编排与多 agent", stage:"loop → graph", file:"graph.ts", tests:8,
+    hook:`回顾主线 raw → harness → loop → graph。前六天把 loop 建全了(单 agent 反复想→做)。今天看它的边界:单 loop 装不下复杂场景时,用<strong>图(节点+边)</strong>做分支、并行、多 agent——同时练"什么时候<strong>不</strong>该上 graph"的判断。`,
+    inv:`★ 不是越靠右(越接近 graph)越好。<strong>能单 loop 就别上 graph</strong>——和"能一次调用就别 agent"同一种克制。`,
+    labs:[
+      ["runGraph","节点→路由→下一节点直到 END;分支/回环/maxSteps 防跑飞"],
+      ["parallel","并发跑多分支、合并成一个节点"],
+      ["reflect","反思模式:生成→评审→修订,直到达标或用尽轮数"]],
+    teach:`单 loop 的边界具体在哪(哪几类场景表达起来别扭)?什么时候该上 graph、什么时候是过度设计?` },
+
+  { n:"08", group:"补齐主流栈", title:"知识层:RAG / 检索", stage:"知识层", file:"rag.ts", tests:6,
+    hook:`Day 0 讲过模型的硬边界:<strong>知识冻结在训练截止</strong>。RAG 就是突破它的主流方式——回答前先从你的知识库检索相关片段,塞进上下文再作答。长期记忆 = 同一套检索机器。`,
+    inv:`RAG =(检索相关片段 → 拼进上下文 → 基于片段作答)。三步零件:<code>chunk</code> 切片 → <code>cosineSimilarity</code> 度量 → <code>VectorStore.search</code> 检索。agentic RAG:把检索做成工具,让 agent 自己决定何时检索。`,
+    labs:[
+      ["chunk","按段落贪心打包成不超长的片段"],
+      ["cosineSimilarity","点积 / 模长积;同向 1、正交 0、反向 -1"],
+      ["VectorStore.search","按余弦相似度取前 k、降序"]],
+    teach:`RAG 突破了模型的什么硬边界?为什么"长期记忆"和 RAG 是同一套机器?什么时候该把检索做成工具(agentic)而不是每次都塞?` },
+
+  { n:"09", group:"补齐主流栈", title:"Guardrails & 人在环路", stage:"治理竖轨", file:"guardrails.ts", tests:8,
+    hook:`前面 agent 越来越能干;能干就意味着能<strong>闯祸</strong>(删错文件、烧爆预算、被诱导做坏事)。今天在放权和安全之间划线:权限审批、人在环路、花费/步数上限、注入防御。这是 agent 上生产的前提。`,
+    inv:`<strong>agent guardrails ≠ LLM guardrails</strong>:agent 会调工具、花钱、改世界,护栏要管的是<strong>动作本身</strong>——allow/ask/deny · 花费/步数上限 · 破坏性确认 · 注入防御。拒绝也要返回配对结果,不炸 loop。`,
+    labs:[
+      ["guardedExecute","allow/ask/deny + 人在环路;任何路径都返回配对结果,拒绝也不炸 loop"],
+      ["BudgetGuard","累计步数/花费,超上限即拒绝"]],
+    teach:`agent guardrails 和 LLM guardrails 差在哪?为什么护栏要管"动作"而不只是"文字"?为什么"拒绝"也必须返回一个配对结果、不能抛异常?` },
+
+  { n:"10", group:"补齐主流栈", title:"Evals & 可观测", stage:"观测竖轨", file:"eval.ts", tests:6,
+    hook:`前面把 agent 建得很能干。但 agent 是<strong>非确定</strong>的、会走弯路——<strong>"没报错"不代表"做对了"</strong>。今天学怎么度量它:trajectory eval(评整条轨迹)+ 回归套件 + tracing。`,
+    inv:`"程序跑完 ≠ 任务做对"。评的是<strong>整条轨迹(trajectory)</strong>,不只最终答案;判定与执行分离,执行崩=记 fail 不抛出。eval 是一等公民,不是上线后才补。`,
+    labs:[
+      ["Tracer","记录 span、汇总 count/tokens/ms"],
+      ["runEvalCase","执行+判定分离;执行崩=记为 fail 不抛出;check 可评整条轨迹"],
+      ["runEvalSuite","跑回归套件、汇总通过率、失败隔离"]],
+    teach:`为什么"没报错 ≠ 做对了"?trajectory eval 评的是什么、和只看最终答案差在哪?为什么判定要和执行分离?` },
+
+  { n:"11", group:"补齐主流栈", title:"上生产:LLMOps & 服务化", stage:"部署层", file:"prod.ts", tests:8,
+    hook:`前十天你建出一个能干活的 agent。但"能在你终端跑"和"能在真实网络+用户操作下稳定服务"之间,隔着一整层工程:服务化、可恢复、上线门禁、主动优化。今天补上这最后一公里。`,
+    inv:`<strong>agent 是个服务,不是个脚本。</strong>生产四件套:服务化(HTTP/SSE 生命周期)· suspend/resume 跨线可恢复 · CI 评测门禁(把 Day 10 用起来)· 语义缓存(主动降本降延迟)。`,
+    labs:[
+      ["SemanticCache","相似度 ≥ 阈值即命中;多条取最相似"],
+      ["serializeResumable / resume","挂起态 ↔ 令牌;损坏令牌明确失败"],
+      ["evalGate","回归 或 通过率不达标 → 挡下,并说明原因"]],
+    teach:`为什么 agent 是"服务"不是"脚本"?serverless 的执行时长上限会撞什么墙?suspend/resume 解决什么?CI 门禁在把 agent 从"能跑"推向什么?` },
+
+  { n:"12", group:"综合", title:"Capstone:独立做一个 agent 产品", stage:"综合 · 全栈", concept:true,
+    hook:`把前 11 章的零件——loop / 真模型 / 工具集 / 持久化 / 上下文 / MCP / graph / RAG / guardrails / evals / LLMOps——<strong>按需</strong>拼成你自己的一个 agent 功能产品。这一章没有"填空题":你来<strong>设计、实现、自评</strong>。`,
+    inv:`验收的不是"它能跑",而是<strong>判断力</strong>:说清"为什么这样设计、为什么用/不用 graph、边界与风险在哪"。流程:① 选题 ② 写一页设计(<code>DESIGN.template.md</code>,动手前必写)③ 实现 ④ 自评(<code>SELF-EVAL.md</code>)⑤ 生产健壮性验证。`,
+    capstone:true,
+    teach:`一页话讲清你的产品:解决什么问题、落在 raw/harness/loop/graph 哪一格、要哪些工具/MCP/RAG、护栏在哪、成功标准是什么、最大的风险是什么。` },
+];
+
+// ── 渲染 ──
+function chapterHTML(c){
+  const meta = [`<span class="tag">演进 · ${c.stage}</span>`];
+  if (c.tests) meta.push(`<span class="tag">${c.tests} 个测试</span>`);
+  if (c.file)  meta.push(`正文 <code>chapters/${c.n}/README.md</code> · 动手 <code>chapters/${c.n}/${c.file}</code>`);
+  else         meta.push(`<code>chapters/${c.n}/README.md</code>`);
+
+  let flow;
+  if (c.concept && !c.capstone) {           // Ch00:纯概念
+    flow = `
+      <div class="step">① 读全景</div>
+      <p>读 <code>chapters/${c.n}/README.md</code>——六个概念,约 15~20 分钟,不写代码。</p>
+      <div class="step">② 写第一个预测</div>
+      <p>在根目录 <code>JOURNAL.md</code> 写下你对"agent 是什么"的第一个预测。带着押注进 Day 1,才学得到。</p>`;
+  } else if (c.capstone) {                   // Ch12:capstone
+    flow = `
+      <div class="step">① 选题 + 写一页设计</div>
+      <p>用 <code>chapters/${c.n}/DESIGN.template.md</code>。<strong>动手前必须写</strong>——这一步就是"独立设计"能力本身。</p>
+      <div class="step">② 实现</div>
+      <p>用前面各章的零件按需搭起来(见 README 第三节的组装指引)。范围小到"一天能做出雏形"。</p>
+      <div class="step">③ 自评 + 生产健壮性验证</div>
+      <p>用 <code>chapters/${c.n}/SELF-EVAL.md</code> 验收——"程序跑完 ≠ 任务做对";再补服务边界 / suspend-resume / CI 门禁(Day 11)。</p>`;
+  } else {                                   // Ch01–11:标准闸门
+    const labs = c.labs.map(([f,d]) => `<li><code>${f}</code> — ${d}</li>`).join("");
+    const observe = c.observe || `读 <code>chapters/${c.n}/README.md</code> 正文(尤其 demo/示例段),把这一章的子系统先"看懂再动手"。`;
+    flow = `
+      <div class="step">① 先观察</div>
+      <p>${observe}</p>
+      <div class="step">② 预测闸门</div>
+      <p>动手前,把预测写进根目录 <code>JOURNAL.md</code>。答完再展开动手区——<strong>先押注,才学得到</strong>。</p>
+      <details class="gate">
+        <summary>${GATE}</summary>
+        <div class="step">③ 空白构建</div>
+        <p>实现 <code>chapters/${c.n}/${c.file}</code> 里现在抛 <code>尚未实现</code> 的函数。失败测试就是规格,让它逐个变绿:</p>
+        <pre><code>npm run test:${c.n}</code></pre>
+        <ul class="labs">${labs}</ul>
+        <p>卡住找 tutor,按 <code>定位→签名→伪代码→局部</code> 逐级要提示,别直接要完整答案——那一步正是把你练成"驾驶员"的地方。</p>
+        <div class="step">④ 讲回来</div>
+        <p>测试绿后,在 <code>JOURNAL.md</code> 用自己的话讲清:${c.teach}</p>
+        <div class="step">⑤ 迁移题</div>
+        <p>做 <code>chapters/${c.n}/TRANSFER.md</code>:把本章不变量迁到新场景,验证你是真懂而非背下。</p>
+      </details>`;
+  }
+
+  return `<section class="chapter" id="${c.n}">
+    <h2>Chapter ${c.n} · ${c.title}</h2>
+    <p class="meta">${meta.join("")}</p>
+    <p>${c.hook}</p>
+    <div class="inv"><strong>一句要记住的:</strong> ${c.inv}</div>
+    ${flow}
+    <footer>动手全在终端;本页只做<strong>阅读 · 导航 · 预测闸门</strong>。真正的习得发生在你写 <code>${c.file || "代码"}</code>、并能不看着从空白重推的时候。</footer>
+  </section>`;
+}
+
+const groups = [];
+const navHTML = CH.map(c => {
+  let g = "";
+  if (!groups.includes(c.group)) { groups.push(c.group); g = `<div class="group">${c.group}</div>`; }
+  return `${g}<a href="#${c.n}" data-n="${c.n}"><span class="n">${c.n}</span>${c.title}</a>`;
+}).join("");
+document.getElementById("nav").innerHTML = navHTML;
+document.getElementById("main").innerHTML = CH.map(chapterHTML).join("");
+
+const links = [...document.querySelectorAll('nav a[data-n]')];
+const ids = CH.map(c => c.n);
+function route(){
+  let n = location.hash.replace('#','');
+  if (!ids.includes(n)) n = "00";
+  document.querySelectorAll('.chapter').forEach(s => { s.hidden = s.id !== n; });
+  links.forEach(a => a.classList.toggle('active', a.dataset.n === n));
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
 </body>
 </html>
