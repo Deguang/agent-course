@@ -24,19 +24,13 @@
   /* 居中阅读列,两侧留白平衡 */
   main { padding:40px 40px; margin:0 auto; max-width:880px; width:100%; }
   h2 { margin:0 0 4px; }
-  .meta { color:var(--muted); font-size:12.5px; margin:0 0 18px; display:flex; gap:10px 14px; flex-wrap:wrap; align-items:center; }
+  .meta { color:var(--muted); font-size:12.5px; margin:0 0 14px; display:flex; gap:10px 14px; flex-wrap:wrap; align-items:center; }
   .meta .tag { border:1px solid var(--line); border-radius:999px; padding:2px 10px; }
-  .hook { font-size:16.5px; margin:0 0 18px; }
-  .hook.loading { color:var(--muted); font-size:14px; }
+  .predict { color:var(--muted); font-size:13px; margin:0 0 20px; padding-left:12px; border-left:2px solid var(--accent); }
+  .predict code { font-size:.9em; }
   code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.88em; background:color-mix(in srgb, var(--fg) 7%, transparent); padding:1px 5px; border-radius:5px; }
   pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:13px; }
   pre code { background:none; padding:0; }
-  .predict { border-left:3px solid var(--accent); background:var(--card); padding:10px 16px; border-radius:0 8px 8px 0; margin:18px 0; font-size:14px; }
-  .gate { border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; margin:18px 0; }
-  .gate > summary { cursor:pointer; font-weight:600; color:var(--accent); list-style:none; }
-  .gate > summary::before { content:"▸ "; }
-  .gate[open] > summary::before { content:"▾ "; }
-  .gate[open] > summary { margin-bottom:12px; }
   footer { color:var(--muted); font-size:12px; margin-top:44px; border-top:1px solid var(--line); padding-top:16px; }
   /* 渲染出来的 README 正文 */
   .readme > :first-child { margin-top:0; }
@@ -76,9 +70,8 @@
 
 <script src="assets/marked.min.js"></script>
 <script>
-// 单一真源:站点只提供「导航 · 预测闸门 · license」;所有教学内容都来自 chapters/NN/README.md,
-// fetch 后渲染 —— 页面不硬编码任何一句正文(钩子也从 README 首段自动提取)。防漂移。
-// CH 只存导航元数据(标题/分组/演进格/测试数),不是内容。
+// 单一真源:站点只提供「导航 · license」;所有教学内容都来自 chapters/NN/README.md,fetch 后直接渲染。
+// 页面不硬编码任何一句正文。CH 只存导航元数据(标题/分组/演进格/测试数)。
 const CH = [
   { n:"00", group:"定向",          title:"基础全景:模型、工具、循环", stage:"全景 raw→graph" },
   { n:"01", group:"主线 · loop",    title:"agent 的心脏:一个 loop",   stage:"loop 诞生",      file:"agent.ts",      tests:5 },
@@ -97,18 +90,6 @@ const CH = [
 
 if (window.marked) marked.setOptions({ gfm:true, breaks:false });
 
-// 从 README 抽首段当钩子(目标 blockquote 或第一段正文),不硬编码。
-function firstBlock(md){
-  const lines = md.replace(/\r/g,"").split("\n");
-  let i = 0;
-  while (i < lines.length && !lines[i].trim()) i++;
-  if (/^#{1,6}\s/.test(lines[i] || "")) i++;         // 跳过 H1
-  while (i < lines.length && !lines[i].trim()) i++;   // 跳过空行
-  const buf = [];
-  while (i < lines.length && lines[i].trim()) { buf.push(lines[i]); i++; }
-  return buf.join(" ").replace(/^>\s?/, "").replace(/^\s*目标[:：]\s*/, "").replace(/\s*>\s*/g, " ").trim();
-}
-
 // 每章 README 只 fetch 一次
 const cache = {};
 async function loadMd(n){
@@ -117,7 +98,6 @@ async function loadMd(n){
   if (!res.ok) throw new Error("HTTP " + res.status);
   return (cache[n] = await res.text());
 }
-const fetchHint = n => `<span class="loading">正文来自 <code>chapters/${n}/README.md</code>。若用 <code>file://</code> 本地打开,fetch 会被浏览器 CORS 拦截——请用部署站点或本地服务器(<code>npx serve</code>)。</span>`;
 
 function chapterHTML(c){
   const meta = [`<span class="tag">演进 · ${c.stage}</span>`];
@@ -126,13 +106,9 @@ function chapterHTML(c){
   return `<section class="chapter" id="${c.n}" hidden>
     <h2>Chapter ${c.n} · ${c.title}</h2>
     <p class="meta">${meta.join("")}</p>
-    <p class="hook loading" data-n="${c.n}">…</p>
-    <div class="predict">动手前先在根目录 <code>JOURNAL.md</code> 写下你的预测,再展开正文——<strong>先押注,才学得到</strong>。(demo/命令、练习、讲回来都在正文里)</div>
-    <details class="gate">
-      <summary>我已写下预测,展开本章正文</summary>
-      <div class="readme" data-src="chapters/${c.n}/README.md"><p class="loading">展开即载入…</p></div>
-    </details>
-    <footer>本页只做<strong>导航 · 预测闸门</strong>;正文单一真源,直接渲染自 <code>chapters/${c.n}/README.md</code>。真正的习得,是你能不看着从空白重推。</footer>
+    <p class="predict">动手前先在 <code>JOURNAL.md</code> 写下预测,再往下读——先押注,才学得到。</p>
+    <div class="readme" data-n="${c.n}"><p class="loading">载入正文…</p></div>
+    <footer>正文单一真源,直接渲染自 <code>chapters/${c.n}/README.md</code>。真正的习得,是你能不看着从空白重推 <code>${c.file || "它"}</code>。</footer>
   </section>`;
 }
 
@@ -144,32 +120,19 @@ document.getElementById("nav").innerHTML = CH.map(c => {
 }).join("");
 document.getElementById("main").innerHTML = CH.map(chapterHTML).join("");
 
-// 钩子:章节可见时懒填(从 README 首段提取)
-function fillHook(n){
-  const el = document.querySelector(`.hook[data-n="${n}"]`);
-  if (!el || el.dataset.loaded) return;
-  el.dataset.loaded = "1";
+// 章节可见时渲染整篇 README(懒加载 + 缓存)
+function render(n){
+  const host = document.querySelector(`.readme[data-n="${n}"]`);
+  if (!host || host.dataset.loaded) return;
+  host.dataset.loaded = "1";
   loadMd(n)
-    .then(md => { el.classList.remove("loading"); el.innerHTML = window.marked ? marked.parseInline(firstBlock(md)) : firstBlock(md); })
-    .catch(() => { el.dataset.loaded = ""; el.innerHTML = fetchHint(n); });
-}
-
-// 闸门:首次展开渲染整篇 README
-document.querySelectorAll("details.gate").forEach(d => {
-  d.addEventListener("toggle", async () => {
-    if (!d.open) return;
-    const host = d.querySelector(".readme");
-    if (!host || host.dataset.loaded) return;
-    host.dataset.loaded = "1";
-    try {
-      const md = await loadMd(host.dataset.src.match(/chapters\/(\d\d)\//)[1]);
-      host.innerHTML = window.marked ? marked.parse(md) : `<pre>${md.replace(/</g, "&lt;")}</pre>`;
-    } catch (e) {
+    .then(md => { host.innerHTML = window.marked ? marked.parse(md) : `<pre>${md.replace(/</g,"&lt;")}</pre>`; })
+    .catch(e => {
       host.dataset.loaded = "";
-      host.innerHTML = `<p class="loading">无法载入(${e.message})。</p>` + fetchHint(host.dataset.src.match(/(\d\d)/)[1]);
-    }
-  });
-});
+      host.innerHTML = `<p class="loading">无法载入 <code>chapters/${n}/README.md</code>(${e.message})。`
+        + `若用 <code>file://</code> 本地打开,fetch 会被浏览器 CORS 拦截——请用部署站点或本地服务器(<code>npx serve</code>)。</p>`;
+    });
+}
 
 // hash 路由
 const ids = CH.map(c => c.n);
@@ -180,7 +143,7 @@ function route(){
   document.querySelectorAll(".chapter").forEach(s => { s.hidden = s.id !== n; });
   links.forEach(a => a.classList.toggle("active", a.dataset.n === n));
   window.scrollTo(0, 0);
-  fillHook(n);
+  render(n);
 }
 window.addEventListener("hashchange", route);
 route();
