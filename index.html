@@ -21,26 +21,24 @@
   nav a.active .n { color:var(--accent); }
   aside .lic { margin-top:auto; padding-top:16px; border-top:1px solid var(--line); color:var(--muted); font-size:11.5px; line-height:1.6; }
   aside .lic a { color:var(--muted); }
-  /* 居中阅读列:两侧留白平衡,不再挤在左边 */
+  /* 居中阅读列,两侧留白平衡 */
   main { padding:40px 40px; margin:0 auto; max-width:880px; width:100%; }
   h2 { margin:0 0 4px; }
-  .meta { color:var(--muted); font-size:12.5px; margin:0 0 20px; display:flex; gap:10px 14px; flex-wrap:wrap; align-items:center; }
+  .meta { color:var(--muted); font-size:12.5px; margin:0 0 18px; display:flex; gap:10px 14px; flex-wrap:wrap; align-items:center; }
   .meta .tag { border:1px solid var(--line); border-radius:999px; padding:2px 10px; }
-  .inv { border-left:3px solid var(--accent); background:var(--card); padding:12px 16px; border-radius:0 8px 8px 0; margin:20px 0; }
+  .hook { font-size:16.5px; margin:0 0 18px; }
+  .hook.loading { color:var(--muted); font-size:14px; }
   code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.88em; background:color-mix(in srgb, var(--fg) 7%, transparent); padding:1px 5px; border-radius:5px; }
   pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:13px; }
   pre code { background:none; padding:0; }
-  .gate { border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; margin:24px 0; }
+  .predict { border-left:3px solid var(--accent); background:var(--card); padding:10px 16px; border-radius:0 8px 8px 0; margin:18px 0; font-size:14px; }
+  .gate { border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; margin:18px 0; }
   .gate > summary { cursor:pointer; font-weight:600; color:var(--accent); list-style:none; }
   .gate > summary::before { content:"▸ "; }
   .gate[open] > summary::before { content:"▾ "; }
   .gate[open] > summary { margin-bottom:12px; }
-  .step { color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.04em; margin:26px 0 6px; }
-  .callout { border-left:3px solid var(--muted); background:color-mix(in srgb, var(--fg) 4%, transparent); padding:10px 14px; border-radius:0 8px 8px 0; margin:18px 0; font-size:14px; }
-  footer { color:var(--muted); font-size:12px; margin-top:48px; border-top:1px solid var(--line); padding-top:16px; }
-  a.src { color:var(--accent); }
-  /* 渲染出来的 README 正文样式 */
-  .readme { margin-top:6px; }
+  footer { color:var(--muted); font-size:12px; margin-top:44px; border-top:1px solid var(--line); padding-top:16px; }
+  /* 渲染出来的 README 正文 */
   .readme > :first-child { margin-top:0; }
   .readme h1 { font-size:1.5em; } .readme h2 { font-size:1.25em; margin-top:1.6em; }
   .readme h3 { font-size:1.08em; margin-top:1.4em; }
@@ -78,113 +76,63 @@
 
 <script src="assets/marked.min.js"></script>
 <script>
-// 壳:每章只放「导航 · 预测闸门」骨架;正文单一真源 —— 直接 fetch 渲染 chapters/NN/README.md,不再手抄(防漂移)。
-// 真正习得在你写代码时;闸门保留「先预测再读」的教学法。
-const GATE = "我已写下预测,展开本章正文(直接渲染 README.md)";
-
+// 单一真源:站点只提供「导航 · 预测闸门 · license」;所有教学内容都来自 chapters/NN/README.md,
+// fetch 后渲染 —— 页面不硬编码任何一句正文(钩子也从 README 首段自动提取)。防漂移。
+// CH 只存导航元数据(标题/分组/演进格/测试数),不是内容。
 const CH = [
-  { n:"00", group:"定向", title:"基础全景:模型、工具、循环", stage:"全景 raw→graph", concept:true,
-    hook:`动手前先打全地基。<strong>不写代码</strong>,约 15~20 分钟,建立六个概念——后面每章都建在它们之上。`,
-    inv:`LLM 的本质是"下一个词预测器";<strong>agent = 模型(想)+ 工具(手脚)+ 循环(反复想→做)</strong>。`,
-    predict:`读正文前,先在根目录 <code>JOURNAL.md</code> 写下你对"agent 是什么"的第一个预测。` },
-
-  { n:"01", group:"主线 · loop", title:"agent 的心脏:一个 loop", stage:"loop 诞生", file:"agent.ts", tests:5,
-    hook:`把模型想成一个<strong>很聪明、但手脚被绑住</strong>的助理:能想能说,却读不了文件、跑不了命令。真去执行、把结果递回去、再问它下一步的,是屋外那个人——<strong>agent loop</strong>。这一章你就写这个人。`,
-    inv:`模型只会「提议」,执行永远是 loop 的事。对任何 provider 都成立。`,
-    observe:`跑 <code>npm run demo:01</code>,把一次完整运行"看见"——看清"模型提议"和"loop 执行"的区别。`,
-    teach:`为什么执行工具的是 loop 不是模型?"工具抛异常"为什么当成数据喂回去、而不是让 loop 崩?` },
-
-  { n:"02", group:"主线 · loop", title:"接真实模型 & 可靠输出", stage:"raw → harness", file:"adapter.ts", tests:9,
-    hook:`Day 1 用假模型验证了 loop。今天接真实模型,且接得"干净、可靠":造一个翻译层(adapter),让 <code>runAgent</code> <strong>一行不改</strong>就能驱动真模型。走完演进前两格 raw → harness。`,
-    inv:`★ 核心(loop、canonical 类型)永远不认识任何 provider;脏细节全部止步于 adapter。换一家 = 只换 adapter,loop 一行不动。`,
-    observe:`想真跑:填好 <code>.env</code>(见 <code>.env.example</code>)后 <code>npm run live:02</code>,用免费 key 端到端跑通。`,
-    teach:`换一家 provider 时哪些代码会动、哪些一行不改?为什么 wire↔canonical 的翻译只该发生在 adapter 这一层?` },
-
-  { n:"03", group:"给 loop 长手脚", title:"常用工具集", stage:"loop + 真实工具", file:"tools.ts", tests:12,
-    hook:`Day 1 的工具是"返回假字符串的函数"。今天让它们真的动文件、跑命令——得到一个能读写代码的 coding agent 雏形。但<strong>真实副作用不可逆,安全和可靠比"能读能写"重要得多</strong>。`,
-    inv:`三条"能用 vs 玩具"的不变量:<strong>原子写</strong> · <strong>超时杀进程 + 输出截断</strong> · <strong>workspace 边界</strong>。`,
-    teach:`为什么 write 要"原子"、bash 要"超时+截断"、路径要过边界?这三条各挡住什么真实事故?` },
-
-  { n:"04", group:"给 loop 长手脚", title:"有状态 & 持久化", stage:"loop 长期运行", file:"session.ts", tests:8,
-    hook:`前三天 loop 每次跑完记忆就没了。今天给它一个可靠的"记忆"——而"可靠"在这里有非常具体、反直觉的含义。`,
-    inv:`历史 = 一棵<strong>只追加、可分支、fail-closed</strong> 的事实树。已发生的事实不可抹除;写失败即 tainted,从此拒绝再写。`,
-    teach:`为什么"已发生的事实不可抹除"?fail-closed 在防什么样的静默损坏?` },
-
-  { n:"05", group:"给 loop 长手脚", title:"上下文管理", stage:"喂得进窗口", file:"context.ts", tests:5,
-    hook:`Day 4 让 agent 能"记住一切"。但这会撞上 Day 0 的硬墙:<strong>上下文窗口有限</strong>。今天学怎么"花着用"这份预算。`,
-    inv:`<strong>完整历史(持久、不删)≠ 投影给模型的上下文(有损、可重算)。</strong>你压缩的是喂给模型的那份,不是磁盘上的事实。`,
-    teach:`"完整历史"和"投影给模型的上下文"为什么必须分开?为什么投影要以"整组"为单位、不能切半组?` },
-
-  { n:"06", group:"给 loop 长手脚", title:"可扩展性:MCP · Skills · 隔离", stage:"能力可插拔", file:"extensions.ts", tests:4,
-    hook:`前几天工具都是你手写的。真实世界里能力来自一个<strong>生态</strong>。今天学怎么"接",且接得安全、省 token——重点是 <strong>MCP</strong>。`,
-    inv:`MCP 是工具的"通用插头"——一个标准接口<strong>跨 provider、跨客户端通用</strong>,回报最高的防锁定投资。`,
-    teach:`MCP 为什么是"回报最高的防锁定投资"?扩展注册为什么要"原子"?` },
-
-  { n:"07", group:"主线 · graph", title:"编排与多 agent", stage:"loop → graph", file:"graph.ts", tests:8,
-    hook:`回顾主线 raw → harness → loop → graph。今天看单 loop 的边界:装不下时用<strong>图(节点+边)</strong>做分支、并行、多 agent——同时练"什么时候<strong>不</strong>该上 graph"的判断。`,
-    inv:`★ 不是越靠右越好。<strong>能单 loop 就别上 graph</strong>——和"能一次调用就别 agent"同一种克制。`,
-    teach:`单 loop 的边界具体在哪?什么时候该上 graph、什么时候是过度设计?` },
-
-  { n:"08", group:"补齐主流栈", title:"知识层:RAG / 检索", stage:"知识层", file:"rag.ts", tests:6,
-    hook:`Day 0 讲过模型的硬边界:<strong>知识冻结在训练截止</strong>。RAG 就是突破它的主流方式。长期记忆 = 同一套检索机器。`,
-    inv:`RAG =(检索相关片段 → 拼进上下文 → 基于片段作答)。零件:<code>chunk</code> → <code>cosineSimilarity</code> → <code>VectorStore.search</code>。`,
-    teach:`RAG 突破了模型的什么硬边界?为什么"长期记忆"和 RAG 是同一套机器?` },
-
-  { n:"09", group:"补齐主流栈", title:"Guardrails & 人在环路", stage:"治理竖轨", file:"guardrails.ts", tests:8,
-    hook:`agent 越能干越能<strong>闯祸</strong>(删错文件、烧爆预算、被诱导做坏事)。今天在放权和安全之间划线。这是上生产的前提。`,
-    inv:`<strong>agent guardrails ≠ LLM guardrails</strong>:护栏要管的是<strong>动作本身</strong>——allow/ask/deny · 花费/步数上限 · 注入防御。拒绝也返回配对结果,不炸 loop。`,
-    teach:`agent guardrails 和 LLM guardrails 差在哪?为什么"拒绝"也必须返回配对结果、不能抛异常?` },
-
-  { n:"10", group:"补齐主流栈", title:"Evals & 可观测", stage:"观测竖轨", file:"eval.ts", tests:6,
-    hook:`agent 是<strong>非确定</strong>的、会走弯路——<strong>"没报错"不代表"做对了"</strong>。今天学怎么度量它。`,
-    inv:`"程序跑完 ≠ 任务做对"。评的是<strong>整条轨迹(trajectory)</strong>,不只最终答案;判定与执行分离。eval 是一等公民。`,
-    teach:`为什么"没报错 ≠ 做对了"?trajectory eval 评的是什么、和只看最终答案差在哪?` },
-
-  { n:"11", group:"补齐主流栈", title:"上生产:LLMOps & 服务化", stage:"部署层", file:"prod.ts", tests:8,
-    hook:`"能在你终端跑"和"能在真实网络+用户操作下稳定服务"之间,隔着一整层工程。今天补上这最后一公里。`,
-    inv:`<strong>agent 是个服务,不是个脚本。</strong>四件套:服务化 · suspend/resume 可恢复 · CI 评测门禁 · 语义缓存。`,
-    teach:`为什么 agent 是"服务"不是"脚本"?suspend/resume 解决什么?CI 门禁在把 agent 从"能跑"推向什么?` },
-
-  { n:"12", group:"综合", title:"Capstone:独立做一个 agent 产品", stage:"综合 · 全栈", concept:true, capstone:true,
-    hook:`把前 11 章的零件<strong>按需</strong>拼成你自己的一个 agent 功能产品。这一章没有填空题:你来<strong>设计、实现、自评</strong>。`,
-    inv:`验收的不是"它能跑",而是<strong>判断力</strong>:说清"为什么这样设计、为什么用/不用 graph、边界与风险在哪"。`,
-    predict:`动手前必须用 <code>chapters/12/DESIGN.template.md</code> 写一页设计——这一步就是"独立设计"能力本身。` },
+  { n:"00", group:"定向",          title:"基础全景:模型、工具、循环", stage:"全景 raw→graph" },
+  { n:"01", group:"主线 · loop",    title:"agent 的心脏:一个 loop",   stage:"loop 诞生",      file:"agent.ts",      tests:5 },
+  { n:"02", group:"主线 · loop",    title:"接真实模型 & 可靠输出",     stage:"raw → harness",  file:"adapter.ts",    tests:9 },
+  { n:"03", group:"给 loop 长手脚", title:"常用工具集",                stage:"loop + 真实工具",file:"tools.ts",      tests:12 },
+  { n:"04", group:"给 loop 长手脚", title:"有状态 & 持久化",           stage:"loop 长期运行",  file:"session.ts",    tests:8 },
+  { n:"05", group:"给 loop 长手脚", title:"上下文管理",                stage:"喂得进窗口",     file:"context.ts",    tests:5 },
+  { n:"06", group:"给 loop 长手脚", title:"可扩展性:MCP · Skills",     stage:"能力可插拔",     file:"extensions.ts", tests:4 },
+  { n:"07", group:"主线 · graph",   title:"编排与多 agent",            stage:"loop → graph",   file:"graph.ts",      tests:8 },
+  { n:"08", group:"补齐主流栈",     title:"知识层:RAG / 检索",         stage:"知识层",         file:"rag.ts",        tests:6 },
+  { n:"09", group:"补齐主流栈",     title:"Guardrails & 人在环路",     stage:"治理竖轨",       file:"guardrails.ts", tests:8 },
+  { n:"10", group:"补齐主流栈",     title:"Evals & 可观测",            stage:"观测竖轨",       file:"eval.ts",       tests:6 },
+  { n:"11", group:"补齐主流栈",     title:"上生产:LLMOps & 服务化",    stage:"部署层",         file:"prod.ts",       tests:8 },
+  { n:"12", group:"综合",          title:"Capstone:独立做产品",       stage:"综合 · 全栈" },
 ];
 
-// ── 渲染骨架 ──
+if (window.marked) marked.setOptions({ gfm:true, breaks:false });
+
+// 从 README 抽首段当钩子(目标 blockquote 或第一段正文),不硬编码。
+function firstBlock(md){
+  const lines = md.replace(/\r/g,"").split("\n");
+  let i = 0;
+  while (i < lines.length && !lines[i].trim()) i++;
+  if (/^#{1,6}\s/.test(lines[i] || "")) i++;         // 跳过 H1
+  while (i < lines.length && !lines[i].trim()) i++;   // 跳过空行
+  const buf = [];
+  while (i < lines.length && lines[i].trim()) { buf.push(lines[i]); i++; }
+  return buf.join(" ").replace(/^>\s?/, "").replace(/^\s*目标[:：]\s*/, "").replace(/\s*>\s*/g, " ").trim();
+}
+
+// 每章 README 只 fetch 一次
+const cache = {};
+async function loadMd(n){
+  if (cache[n]) return cache[n];
+  const res = await fetch(`chapters/${n}/README.md`);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return (cache[n] = await res.text());
+}
+const fetchHint = n => `<span class="loading">正文来自 <code>chapters/${n}/README.md</code>。若用 <code>file://</code> 本地打开,fetch 会被浏览器 CORS 拦截——请用部署站点或本地服务器(<code>npx serve</code>)。</span>`;
+
 function chapterHTML(c){
   const meta = [`<span class="tag">演进 · ${c.stage}</span>`];
   if (c.tests) meta.push(`<span class="tag">${c.tests} 个测试</span>`);
   if (c.file)  meta.push(`动手 <code>chapters/${c.n}/${c.file}</code>`);
-
-  let pre; // 闸门之前的定向 + 预测
-  if (c.concept && !c.capstone) {
-    pre = `<div class="step">① 读全景 → ② 写第一个预测</div><p>${c.predict}</p>`;
-  } else if (c.capstone) {
-    pre = `<div class="step">① 选题 → ② 写一页设计</div><p>${c.predict}</p>`;
-  } else {
-    pre = `
-      <div class="step">① 先观察</div><p>${c.observe || `读正文里的 demo/示例段,先"看懂再动手"。`}</p>
-      <div class="step">② 预测闸门</div><p>动手前,把预测写进根目录 <code>JOURNAL.md</code>——<strong>先押注,才学得到</strong>。</p>`;
-  }
-
-  const teach = c.teach
-    ? `<div class="callout"><strong>③ 讲回来(测试绿后,写进 JOURNAL.md):</strong> ${c.teach}<br><span style="font-size:13px">卡住找 tutor,按 <code>定位→签名→伪代码→局部</code> 逐级要提示,别直接要完整答案。</span></div>`
-    : "";
-
   return `<section class="chapter" id="${c.n}" hidden>
     <h2>Chapter ${c.n} · ${c.title}</h2>
     <p class="meta">${meta.join("")}</p>
-    <p>${c.hook}</p>
-    <div class="inv"><strong>一句要记住的:</strong> ${c.inv}</div>
-    ${pre}
+    <p class="hook loading" data-n="${c.n}">…</p>
+    <div class="predict">动手前先在根目录 <code>JOURNAL.md</code> 写下你的预测,再展开正文——<strong>先押注,才学得到</strong>。(demo/命令、练习、讲回来都在正文里)</div>
     <details class="gate">
-      <summary>${GATE}</summary>
-      <div class="readme" data-src="chapters/${c.n}/README.md"><p class="loading">展开即载入正文…</p></div>
-      ${teach}
-      <p style="font-size:13px;color:var(--muted)">↑ 正文直接渲染自 <code>chapters/${c.n}/README.md</code>(单一真源)。原始文件见仓库。</p>
+      <summary>我已写下预测,展开本章正文</summary>
+      <div class="readme" data-src="chapters/${c.n}/README.md"><p class="loading">展开即载入…</p></div>
     </details>
-    <footer>动手全在终端;本页只做<strong>导航 · 预测闸门</strong>。真正的习得,是你能不看着从空白重推 <code>${c.file || "它"}</code>。</footer>
+    <footer>本页只做<strong>导航 · 预测闸门</strong>;正文单一真源,直接渲染自 <code>chapters/${c.n}/README.md</code>。真正的习得,是你能不看着从空白重推。</footer>
   </section>`;
 }
 
@@ -196,8 +144,17 @@ document.getElementById("nav").innerHTML = CH.map(c => {
 }).join("");
 document.getElementById("main").innerHTML = CH.map(chapterHTML).join("");
 
-// ── 闸门懒加载:首次展开才 fetch + 渲染 README ──
-if (window.marked) marked.setOptions({ breaks:false, gfm:true });
+// 钩子:章节可见时懒填(从 README 首段提取)
+function fillHook(n){
+  const el = document.querySelector(`.hook[data-n="${n}"]`);
+  if (!el || el.dataset.loaded) return;
+  el.dataset.loaded = "1";
+  loadMd(n)
+    .then(md => { el.classList.remove("loading"); el.innerHTML = window.marked ? marked.parseInline(firstBlock(md)) : firstBlock(md); })
+    .catch(() => { el.dataset.loaded = ""; el.innerHTML = fetchHint(n); });
+}
+
+// 闸门:首次展开渲染整篇 README
 document.querySelectorAll("details.gate").forEach(d => {
   d.addEventListener("toggle", async () => {
     if (!d.open) return;
@@ -205,26 +162,25 @@ document.querySelectorAll("details.gate").forEach(d => {
     if (!host || host.dataset.loaded) return;
     host.dataset.loaded = "1";
     try {
-      const res = await fetch(host.dataset.src);
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const md = await res.text();
-      host.innerHTML = window.marked ? marked.parse(md) : `<pre>${md.replace(/</g,"&lt;")}</pre>`;
+      const md = await loadMd(host.dataset.src.match(/chapters\/(\d\d)\//)[1]);
+      host.innerHTML = window.marked ? marked.parse(md) : `<pre>${md.replace(/</g, "&lt;")}</pre>`;
     } catch (e) {
       host.dataset.loaded = "";
-      host.innerHTML = `<p class="loading">无法载入 <code>${host.dataset.src}</code>(${e.message})。<br>若用 <code>file://</code> 本地打开,fetch 会被浏览器 CORS 拦截——请用部署站点,或本地起服务器(<code>npx serve</code>)。</p>`;
+      host.innerHTML = `<p class="loading">无法载入(${e.message})。</p>` + fetchHint(host.dataset.src.match(/(\d\d)/)[1]);
     }
   });
 });
 
-// ── hash 路由 ──
+// hash 路由
 const ids = CH.map(c => c.n);
 const links = [...document.querySelectorAll("nav a[data-n]")];
 function route(){
-  let n = location.hash.replace("#","");
+  let n = location.hash.replace("#", "");
   if (!ids.includes(n)) n = "00";
   document.querySelectorAll(".chapter").forEach(s => { s.hidden = s.id !== n; });
   links.forEach(a => a.classList.toggle("active", a.dataset.n === n));
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
+  fillHook(n);
 }
 window.addEventListener("hashchange", route);
 route();
