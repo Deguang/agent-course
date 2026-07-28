@@ -331,8 +331,21 @@ footer a {
   line-height: var(--line-height-normal);
   overflow-x: auto;
 }
+/* 渲染前:藏源码文字(font-size:0)、预留高度、显示占位提示 —— 不闪源码、不跳动 */
 .readme pre.mermaid:not([data-processed]) {
-  color: transparent;
+  font-size: 0;
+  min-height: 5em;
+  position: relative;
+}
+.readme pre.mermaid:not([data-processed])::after {
+  content: "绘制流程图…";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--muted);
 }
 .readme pre.mermaid svg {
   max-width: 100%;
