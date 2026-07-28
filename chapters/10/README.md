@@ -31,6 +31,17 @@
 
 `runEvalSuite`:跑一批(**回归套件**)，汇总**通过率**——这就是你改代码后"有没有变差"的度量。
 
+```mermaid
+flowchart TD
+  Case["评测用例 = run + check"]:::io --> Run["run:执行 agent → 结果 / 轨迹"]:::sub
+  Run -->|执行崩了| Fail["判失败 + 记 error(隔离,不拖垮套件)"]:::model
+  Run -->|正常产出| Check{"check:judge 做对没有?"}:::model
+  Check -->|对| Pass["pass"]:::sub
+  Check -->|错| Fail
+  Pass --> Suite["runEvalSuite 汇总通过率"]:::io
+  Fail --> Suite
+```
+
 ## 四、可观测:把每一步记下来
 
 光有通过率不够，还要能 **debug** 和**看成本**。`Tracer`(Lab 10.1)记录每一步 span(哪次 model 调用、哪个工具、耗时多少、花了多少 token)，再汇总。真实系统里这叫 **tracing/observability**，是排查"为什么这次跑砸了""钱花哪了"的眼睛。
