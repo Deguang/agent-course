@@ -24,6 +24,17 @@ Day 1 用假模型验证了 loop。今天接真实模型——而且要接得"�
 
 换 provider = **只换 adapter/transport**,loop 与 canonical 类型**一行不动**。私有能力(如 prompt caching)藏在 adapter 接缝后按需用——这就是"不锁定"的落地。
 
+```mermaid
+flowchart LR
+  C["canonical:内部真相(loop / Step / History)"]:::model
+  A["adapter:翻译层(每家一个)"]:::sub
+  W["wire / transport:provider 线上格式"]:::io
+  C -->|historyToWire 出站| A
+  A --> W
+  W --> A
+  A -->|accumulate 入站| C
+```
+
 **出站**:`historyToWire` 把 canonical history + 工具映射成 wire 请求(Lab 2.1)。
 
 ## 三、真流式:参数是碎片拼出来的(本章硬骨头)
