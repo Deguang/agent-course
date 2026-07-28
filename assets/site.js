@@ -17,8 +17,8 @@ function applyTheme(mode) {
   try {
     localStorage.setItem("ac-theme", mode);
   } catch (e) {}
-  const label = document.querySelector("#theme-toggle .theme-label");
-  if (label) label.textContent = LABELS[mode];
+  const btn = document.getElementById("theme-toggle");
+  if (btn) btn.title = `主题:${LABELS[mode]}(点击切换)`;
 }
 
 applyTheme(currentMode());
