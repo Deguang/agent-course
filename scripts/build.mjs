@@ -255,6 +255,7 @@ function page({ base, active, title, desc, canonical, jsonld, contentHTML, hasMe
 ${JSON.stringify(jsonld)}
 </script>
 <script>try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}</script>
+<style>:root{background:#faf9f6}:root[data-theme="dark"]{background:#16181c}@media(prefers-color-scheme:dark){:root[data-theme="system"]{background:#16181c}}</style>
 <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin />
 <link rel="stylesheet" href="${A}/jinkai.css" />
 <link rel="stylesheet" href="${A}/site.css" />
