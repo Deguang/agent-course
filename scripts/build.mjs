@@ -267,12 +267,17 @@ ${JSON.stringify(jsonld)}
 <body>
 <div class="wrap">
   <aside>
-    <div class="brand"><a class="home" href="${home}"><h1>动手学 Agent</h1></a><div class="sub">provider 中立 · TS · 习得导向</div></div>
-    <nav>${navList(base, active)}</nav>${ACTIONS}
-    <div class="lic">
-      <strong>许可</strong><br>
-      代码 <a href="${REPO}/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> · 内容 <a href="${REPO}/blob/main/LICENSE-CONTENT" target="_blank" rel="noopener">CC BY-NC 4.0</a><br>
-      © 2026 Deguang
+    <div class="brand">
+      <a class="home" href="${home}"><h1>动手学 Agent</h1><span class="sub">provider 中立 · TS · 习得导向</span></a>
+      <button class="nav-toggle" type="button" aria-label="目录" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+    <div class="drawer">
+      <nav>${navList(base, active)}</nav>${ACTIONS}
+      <div class="lic">
+        <strong>许可</strong><br>
+        代码 <a href="${REPO}/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> · 内容 <a href="${REPO}/blob/main/LICENSE-CONTENT" target="_blank" rel="noopener">CC BY-NC 4.0</a><br>
+        © 2026 Deguang
+      </div>
     </div>
   </aside>
   <main>${contentHTML}</main>

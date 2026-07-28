@@ -106,6 +106,27 @@ aside .brand h1 {
 aside .brand .sub {
   color: var(--muted);
   font-size: 13px;
+  display: block;
+}
+/* 桌面:drawer 透明,子元素直接参与 aside 的 flex;汉堡隐藏 */
+.drawer {
+  display: contents;
+}
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+.nav-toggle svg {
+  width: 22px;
+  height: 22px;
 }
 nav {
   flex: 1 1 auto;
@@ -374,12 +395,74 @@ footer a {
     border-right: none;
     border-bottom: 1px solid var(--line);
   }
+  aside .brand {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: auto;
+    padding: 12px 18px;
+  }
+  aside .brand h1 {
+    margin: 0;
+  }
+  .nav-toggle {
+    display: flex;
+  }
+  /* 移动端:导航折叠,点汉堡展开 */
+  .drawer {
+    display: none;
+  }
+  aside.nav-open .drawer {
+    display: block;
+    padding-bottom: var(--space-4);
+  }
   nav {
     max-height: none;
+    overflow: visible;
   }
   main {
     padding: var(--space-6) var(--space-5);
+    font-size: 16px;
   }
+}
+
+/* 点击放大预览:图片 + mermaid 图 */
+.readme img,
+.readme pre.mermaid svg {
+  cursor: zoom-in;
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: zoom-out;
+  animation: lb-fade 0.15s ease;
+}
+@keyframes lb-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.lightbox > * {
+  max-width: 96vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+.lightbox svg {
+  padding: 20px;
 }
 
 /* 代码高亮(highlight.js 在构建期生成 class;颜色由变量随主题切换,GitHub 配色) */
