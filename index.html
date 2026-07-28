@@ -4,6 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>动手学 Agent</title>
+<script>
+  // 提前应用主题,避免刷新闪白/闪暗
+  try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}
+</script>
 <style>
   :root {
     /* 颜色(纯亮色) */
@@ -23,6 +27,11 @@
     --transition-base: .2s ease;
     --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px; --space-8:32px;
   }
+  /* 暗色:显式选 dark,或「跟随系统」且系统偏好暗 */
+  :root[data-theme="dark"] { --bg:#16181c; --fg:#e6e6e6; --muted:#9aa0a6; --accent:#e08a5a; --line:#2c2f36; --card:#1e2126; color-scheme:dark; }
+  @media (prefers-color-scheme: dark) {
+    :root[data-theme="system"] { --bg:#16181c; --fg:#e6e6e6; --muted:#9aa0a6; --accent:#e08a5a; --line:#2c2f36; --card:#1e2126; color-scheme:dark; }
+  }
   * { box-sizing:border-box; }
   body { margin:0; font:var(--font-size-base)/var(--line-height-normal) var(--font-body); color:var(--fg); background:var(--bg); }
   .wrap { display:grid; grid-template-columns:300px minmax(0,1fr); min-height:100vh; }
@@ -39,7 +48,11 @@
   nav a.active { background:color-mix(in srgb, var(--accent) 15%, transparent); color:var(--accent); font-weight:600; }
   nav a .n { color:var(--muted); font-variant-numeric:tabular-nums; margin-right:var(--space-2); }
   nav a.active .n { color:var(--accent); }
-  aside .lic { flex:0 0 auto; padding:var(--space-4) var(--space-5); border-top:1px solid var(--line); color:var(--muted); font-size:12px; line-height:var(--line-height-tight); }
+  aside .theme { flex:0 0 auto; display:flex; gap:var(--space-1); padding:var(--space-3) var(--space-5) 0; }
+  aside .theme button { flex:1; font-family:inherit; font-size:12px; padding:6px 4px; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:var(--radius); cursor:pointer; transition:all var(--transition-base); }
+  aside .theme button:hover { color:var(--fg); }
+  aside .theme button.active { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); font-weight:600; }
+  aside .lic { flex:0 0 auto; padding:var(--space-4) var(--space-5); border-top:1px solid var(--line); color:var(--muted); font-size:12px; line-height:var(--line-height-tight); margin-top:var(--space-3); }
   aside .lic a { color:var(--muted); }
 
   /* 居中阅读列,字号放大 */
@@ -84,6 +97,11 @@
       <div class="sub">provider 中立 · TS · 习得导向</div>
     </div>
     <nav id="nav"></nav>
+    <div class="theme" id="theme">
+      <button data-mode="light" title="亮色">☀️ 亮</button>
+      <button data-mode="dark" title="暗色">🌙 暗</button>
+      <button data-mode="system" title="跟随系统">🖥 跟随</button>
+    </div>
     <div class="lic">
       <strong>许可</strong><br>
       代码 <a href="LICENSE">MIT</a> · 内容 <a href="LICENSE-CONTENT">CC BY-NC 4.0</a><br>
@@ -114,6 +132,15 @@ const CH = [
 ];
 
 if (window.marked) marked.setOptions({ gfm:true, breaks:false });
+
+// 主题切换:亮 / 暗 / 跟随系统(data-theme 已在 <head> 提前应用)
+function applyTheme(mode){
+  document.documentElement.setAttribute("data-theme", mode);
+  try { localStorage.setItem("ac-theme", mode); } catch (e) {}
+  document.querySelectorAll("#theme button").forEach(b => b.classList.toggle("active", b.dataset.mode === mode));
+}
+applyTheme(localStorage.getItem("ac-theme") || "system");
+document.querySelectorAll("#theme button").forEach(b => b.addEventListener("click", () => applyTheme(b.dataset.mode)));
 
 // README 里的相对链接是相对"文件在仓库里的位置"写的;页面渲染在别的路径上,直接点会解析错。
 // 解析成 GitHub 仓库地址。baseDir 如 "chapters/01/"。
