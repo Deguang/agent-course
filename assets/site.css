@@ -30,17 +30,9 @@
   --space-8: 32px;
 }
 /* 暗色:显式选 dark,或「跟随系统」且系统偏好暗 */
-:root[data-theme="dark"] {
-  --bg: #16181c;
-  --fg: #e6e6e6;
-  --muted: #9aa0a6;
-  --accent: #e08a5a;
-  --line: #2c2f36;
-  --card: #1e2126;
-  color-scheme: dark;
-}
+/* 跟随系统(默认,零 JS 依赖)—— 首帧即正确,这是消除主题闪烁的关键 */
 @media (prefers-color-scheme: dark) {
-  :root[data-theme="system"] {
+  :root {
     --bg: #16181c;
     --fg: #e6e6e6;
     --muted: #9aa0a6;
@@ -49,6 +41,25 @@
     --card: #1e2126;
     color-scheme: dark;
   }
+}
+/* 用户显式选择(JS 设 data-theme)才覆盖系统偏好 */
+:root[data-theme="light"] {
+  --bg: #faf9f6;
+  --fg: #1f2328;
+  --muted: #6a737d;
+  --accent: #c9622e;
+  --line: #e5e2db;
+  --card: #fff;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #16181c;
+  --fg: #e6e6e6;
+  --muted: #9aa0a6;
+  --accent: #e08a5a;
+  --line: #2c2f36;
+  --card: #1e2126;
+  color-scheme: dark;
 }
 * {
   box-sizing: border-box;
