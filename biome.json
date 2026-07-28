@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!package-lock.json", "!assets/jinkai.css", "!dist", "!**/*.svg"]
+    "includes": [
+      "**",
+      "!package-lock.json",
+      "!assets/jinkai.css",
+      "!assets/mermaid.min.js",
+      "!dist",
+      "!**/*.svg"
+    ]
   },
   "formatter": {
     "enabled": true,

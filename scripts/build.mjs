@@ -154,6 +154,19 @@ function rewriteLinks(html, baseDir, pageBase) {
   });
 }
 
+// ```mermaid 代码块(被 highlight 当 plaintext 包成 code)→ 还原成 <pre class="mermaid">,交客户端渲染。
+function extractMermaid(html) {
+  let has = false;
+  const out = html.replace(
+    /<pre><code class="hljs language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+    (_m, src) => {
+      has = true;
+      return `<pre class="mermaid">${src}</pre>`;
+    },
+  );
+  return { html: out, has };
+}
+
 // 从 README 首段抽纯文本描述(去 markdown 记号，截断)
 function extractDesc(md) {
   const lines = md.replace(/\r/g, "").split("\n");
@@ -206,9 +219,12 @@ function navList(base, active) {
 }
 
 // 一个完整页面
-function page({ base, active, title, desc, canonical, jsonld, contentHTML }) {
+function page({ base, active, title, desc, canonical, jsonld, contentHTML, hasMermaid }) {
   const A = `${base}assets`;
   const home = base || "./";
+  const mermaidScripts = hasMermaid
+    ? `\n<script src="${A}/mermaid.min.js" defer></script>\n<script src="${A}/mermaid-init.js" defer></script>`
+    : "";
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -256,7 +272,7 @@ ${JSON.stringify(jsonld)}
   </aside>
   <main>${contentHTML}</main>
 </div>
-<script src="${A}/site.js" defer></script>
+<script src="${A}/site.js" defer></script>${mermaidScripts}
 </body>
 </html>
 `;
@@ -269,7 +285,8 @@ async function build() {
   // 首页 = 根 README(课程导言)
   {
     const md = await readFile("README.md", "utf8");
-    const body = rewriteLinks(marked.parse(md), "", ""); // 根 README 链接相对仓库根
+    const mm = extractMermaid(rewriteLinks(marked.parse(md), "", "")); // 根 README 链接相对仓库根
+    const body = mm.html;
     const contentHTML = `<div class="readme">${body}</div>
     <footer>渲染自 <a href="${REPO}/blob/main/README.md" target="_blank" rel="noopener">README.md</a>(单一真源)· <a href="${REPO}" target="_blank" rel="noopener">GitHub 仓库</a></footer>`;
     const html = page({
@@ -302,6 +319,7 @@ async function build() {
         license: "https://creativecommons.org/licenses/by-nc/4.0/",
       },
       contentHTML,
+      hasMermaid: mm.has,
     });
     await writeFile(`${OUT}/index.html`, html);
   }
@@ -312,6 +330,8 @@ async function build() {
     let body = marked.parse(md);
     body = body.replace(/<h1[^>]*>[\s\S]*?<\/h1>\s*/, ""); // 去 README 的 H1(与站点标题重复)
     body = rewriteLinks(body, `chapters/${c.n}/`, "../");
+    const mm = extractMermaid(body);
+    body = mm.html;
     const badges = [`<span class="tag">演进 · ${c.stage}</span>`];
     if (c.tests) badges.push(`<span class="tag">${c.tests} 个测试</span>`);
     if (c.file) badges.push(`动手 <code>chapters/${c.n}/${c.file}</code>`);
@@ -341,6 +361,7 @@ async function build() {
         license: "https://creativecommons.org/licenses/by-nc/4.0/",
       },
       contentHTML,
+      hasMermaid: mm.has,
     });
     await mkdir(`${OUT}/${c.n}`, { recursive: true });
     await writeFile(`${OUT}/${c.n}/index.html`, html);
@@ -348,7 +369,15 @@ async function build() {
 
   // 静态资源
   await mkdir(`${OUT}/assets`, { recursive: true });
-  for (const f of ["site.css", "site.js", "jinkai.css", "favicon.svg", "og.png"]) {
+  for (const f of [
+    "site.css",
+    "site.js",
+    "jinkai.css",
+    "favicon.svg",
+    "og.png",
+    "mermaid.min.js",
+    "mermaid-init.js",
+  ]) {
     await cp(`assets/${f}`, `${OUT}/assets/${f}`);
   }
 
