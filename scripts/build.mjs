@@ -10,7 +10,7 @@ const SITE = "https://app.lideguang.com/agent-course"; // 部署基址(自定义
 const REPO = "https://github.com/Deguang/agent-course";
 const OUT = "dist";
 const DESC =
-  "provider 中立、TypeScript、习得导向的两周 Agent 工程课。沿 raw→harness→loop→graph 演进,12 章从零手写 Agent Loop、工具集、RAG、Guardrails、Evals 到上生产 LLMOps。";
+  "provider 中立、TypeScript、习得导向的两周 Agent 工程课。沿 raw→harness→loop→graph 演进，12 章从零手写 Agent Loop、工具集、RAG、Guardrails、Evals 到上生产 LLMOps。";
 
 // 导航元数据(不是内容;内容全在 README)
 const CH = [
@@ -107,7 +107,7 @@ const CH = [
 ];
 
 marked.setOptions({ gfm: true, breaks: false });
-// 构建期代码高亮(highlight.js);颜色由 CSS 变量随主题切换,运行时零 JS。
+// 构建期代码高亮(highlight.js);颜色由 CSS 变量随主题切换，运行时零 JS。
 marked.use(
   markedHighlight({
     emptyLangClass: "hljs",
@@ -146,7 +146,7 @@ function rewriteLinks(html, baseDir, pageBase) {
     const path = cut === -1 ? raw : raw.slice(0, cut);
     const tail = cut === -1 ? "" : raw.slice(cut);
     const resolved = resolvePath(baseDir, path);
-    // 指向某章 README(或章目录)→ 站内页 /NN/,而不是跳去 GitHub
+    // 指向某章 README(或章目录)→ 站内页 /NN/，而不是跳去 GitHub
     const chap = resolved.match(/^chapters\/(\d\d)(?:\/README\.md)?$/);
     if (chap) return `href="${pageBase}${chap[1]}/${tail}"`;
     const isFile = /\.[a-z0-9]+$/i.test(resolved.split("/").pop() || "");
@@ -154,7 +154,7 @@ function rewriteLinks(html, baseDir, pageBase) {
   });
 }
 
-// 从 README 首段抽纯文本描述(去 markdown 记号,截断)
+// 从 README 首段抽纯文本描述(去 markdown 记号，截断)
 function extractDesc(md) {
   const lines = md.replace(/\r/g, "").split("\n");
   let i = 0;
@@ -319,7 +319,7 @@ async function build() {
     const contentHTML = `<h2>Chapter ${c.n} · ${c.title}</h2>
     <p class="meta">${badges.join("")}</p>
     <div class="readme">${body}</div>
-    <footer>正文渲染自 <a href="${REPO}/blob/main/chapters/${c.n}/README.md" target="_blank" rel="noopener">chapters/${c.n}/README.md</a>(单一真源)。真正的习得,是你能不看着从空白重推 <code>${c.file || "它"}</code>。</footer>`;
+    <footer>正文渲染自 <a href="${REPO}/blob/main/chapters/${c.n}/README.md" target="_blank" rel="noopener">chapters/${c.n}/README.md</a>(单一真源)。真正的习得，是你能不看着从空白重推 <code>${c.file || "它"}</code>。</footer>`;
     const title = `Chapter ${c.n} · ${c.title} · 动手学 Agent`;
     const html = page({
       base: "../",
