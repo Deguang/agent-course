@@ -64,6 +64,11 @@
 * {
   box-sizing: border-box;
 }
+html {
+  /* 关掉移动浏览器的文字自动放大(否则手机上整页像被放大了一档) */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
   margin: 0;
   font: var(--font-size-base) / var(--line-height-normal) var(--font-body);
