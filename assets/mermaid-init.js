@@ -48,6 +48,7 @@
       primaryTextColor: cssVar("--fg"),
       lineColor: cssVar("--muted"),
       textColor: cssVar("--fg"),
+      edgeLabelBackground: cssVar("--bg"),
       fontSize: "16px",
     },
   });
