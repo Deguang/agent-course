@@ -397,7 +397,8 @@ footer a {
     overflow-x: hidden;
   }
   .wrap {
-    grid-template-columns: 1fr;
+    /* minmax(0,1fr):最小值 0,避免宽子元素(mermaid/长代码)把网格轨道撑出屏宽 */
+    grid-template-columns: minmax(0, 1fr);
     max-width: 100vw;
   }
   aside {
