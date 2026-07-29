@@ -76,6 +76,14 @@
     window.mermaid.initialize(config());
     try {
       await window.mermaid.run({ nodes });
+      // 让 SVG 响应式:覆盖 mermaid 的内联 px 上限,防移动端超屏溢出
+      for (const n of nodes) {
+        const s = n.querySelector("svg");
+        if (s) {
+          s.style.maxWidth = "100%";
+          s.style.height = "auto";
+        }
+      }
     } catch (e) {
       /* 渲染失败:保留源码文本,不炸页面 */
     }
