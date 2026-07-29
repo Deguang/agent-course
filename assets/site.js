@@ -50,6 +50,14 @@ function openLightbox(node) {
   content.className = "lb-content";
   const clone = node.cloneNode(true);
   clone.removeAttribute("style"); // 去掉 mermaid 内联 max-width,由 CSS 接管
+  if (clone.tagName && clone.tagName.toLowerCase() === "svg") {
+    // 用 viewBox 尺寸补固有宽高,避免 SVG 在 lightbox 里塌成 0(白块)
+    const vb = (clone.getAttribute("viewBox") || "").trim().split(/\s+/).map(Number);
+    if (vb.length === 4 && vb[2] > 0 && vb[3] > 0) {
+      clone.setAttribute("width", vb[2]);
+      clone.setAttribute("height", vb[3]);
+    }
+  }
   content.appendChild(clone);
   stage.appendChild(content);
   box.appendChild(stage);
