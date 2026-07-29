@@ -37,6 +37,18 @@ flowchart LR
 
 **出站**:`historyToWire` 把 canonical history + 工具映射成 wire 请求(Lab 2.1)。
 
+### 延伸:多模态——消息不止文本(canonical 的自然泛化)
+
+到这里 canonical 消息还是"一段文本"。但真实模型早已多模态:一条 user 消息可以同时带**文字 + 图片**(截图、文档、图表),甚至音频。别慌——这**不是新架构**,只是 canonical IR 的**一处泛化**:
+
+- **content 从"字符串"变成"parts 数组"**:`[{type:"text",...},{type:"image",...}]`。你的 loop、`accumulate`、`runAgent` **一行不动**——它们只搬运消息,不关心 part 里装的是字还是图。
+- **adapter 多一种映射**:把 image part 翻成各家 provider 的线上格式(有的用图片 URL、有的用 base64 + mime,字段名各不同——**以各自官方文档为准,别凭记忆**)。这正是上面那张 `canonical ⇄ adapter ⇄ wire` 图的兑现:换一家,还是只动 adapter。
+- provider 中立视角:Vercel AI SDK 已把"消息带 image part"抽象成统一形态,你只在 adapter 接缝处对接——和"不锁定"一脉相承。
+
+**判断力(老规矩):能纯文本解决就别塞图。** 图片 token 更贵、更慢、也更容易让模型跑偏;只有任务**本质上是视觉的**(读截图、看图表、OCR-free 文档理解)才上。
+
+> **Computer Use = loop + 一个视觉工具**:截图 → 模型看图决定点哪 → 执行 → 再截图。它不是新范式,而是 Day 1 的 loop + Day 3 的一个"截图/操作"工具 + 这里的 image part。Day 3 的迁移题已让你想过这件事。
+
 ## 三、真流式:参数是碎片拼出来的(本章硬骨头)
 
 玩具教程里模型"整块"返回;**真实 provider 是逐段流式**吐回的，尤其:
