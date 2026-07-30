@@ -366,6 +366,7 @@ footer a {
   font-family: var(--font-body);
   line-height: var(--line-height-normal);
   overflow-x: auto;
+  container-type: inline-size; /* 供 cqw:图高以"区域宽度"为基准 */
 }
 /* 渲染前:藏源码文字(font-size:0)、预留高度、显示占位提示 —— 不闪源码、不跳动 */
 .readme pre.mermaid:not([data-processed]) {
@@ -385,8 +386,8 @@ footer a {
 }
 .readme pre.mermaid svg {
   max-width: 100%;
-  /* 太高的图(深的竖版树)缩到视口内,细节点击放大看 */
-  max-height: 78vh;
+  /* 高 ≤ 区域宽的一半:超高的竖版图缩进这个横向盒子,细节点击放大看 */
+  max-height: 50cqw;
   height: auto;
 }
 

@@ -30,14 +30,12 @@
 
 ```mermaid
 flowchart TD
-  T["工具调用"]:::io --> P{"PermissionPolicy 裁决"}:::model
-  P -->|allow| R["执行工具"]:::sub
-  P -->|deny| X["拒绝"]:::sub
-  P -->|ask| H{"人在环路:批准?"}:::model
+  T["工具调用"]:::io --> P{"裁决 allow / ask / deny"}:::model
+  P -->|allow 自动放行| R["执行工具"]:::sub
+  P -->|ask 人在环路| H{"人批准?"}:::model
+  P -->|deny 直接拒绝| X["拒绝,不执行"]:::sub
   H -->|批准| R
   H -->|拒绝| X
-  R --> Y["配对结果喂回模型"]:::io
-  X --> Y
 ```
 
 ## 三、花费 & 循环上限
