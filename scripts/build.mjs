@@ -208,8 +208,10 @@ const ACTIONS = `
     </div>`;
 
 function navList(base, active) {
+  const home = base || "./";
+  // 顶部「序言」= 落地页(root README)
+  let out = `<a href="${home}"${active === "" ? ' class="active"' : ""}><span class="n">序</span>序言</a>`;
   const seen = [];
-  let out = "";
   for (const c of CH) {
     if (!seen.includes(c.group)) {
       seen.push(c.group);
@@ -297,16 +299,7 @@ async function build() {
     const md = await readFile("README.md", "utf8");
     const mm = extractMermaid(rewriteLinks(marked.parse(md), "", "")); // 根 README 链接相对仓库根
     const body = mm.html;
-    const preface = `<section class="preface">
-      <p class="lead">一门 <strong>provider 中立 · TypeScript · 习得导向</strong> 的 agent 工程课——不是读完就忘的教程,而是让你<strong>亲手从空白重推</strong>,练出"看得懂、也纠得动 AI 产出"的判断力。</p>
-      <div class="spine" aria-label="架构主线"><span>raw</span><i>→</i><span>harness</span><i>→</i><span>loop</span><i>→</i><span>graph</span></div>
-      <p class="spine-note">沿 agent 架构的进化一路建上去:每天一格、一个完整子系统 + 一个有分量的 lab。<strong>不是越靠右越好</strong>——"该用哪一格"的判断,本身就是要练的能力。</p>
-      <div class="cta">
-        <a class="btn primary" href="00/">从 Chapter 00 开始 →</a>
-        <a class="btn ghost" href="01/">直奔 Agent Loop(Ch01)</a>
-      </div>
-    </section>`;
-    const contentHTML = `${preface}<div class="readme">${body}</div>
+    const contentHTML = `<div class="readme">${body}</div>
     <footer>渲染自 <a href="${REPO}/blob/main/README.md" target="_blank" rel="noopener">README.md</a>(单一真源)· <a href="${REPO}" target="_blank" rel="noopener">GitHub 仓库</a></footer>`;
     const html = page({
       base: "",
