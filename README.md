@@ -7,6 +7,8 @@
 一门为**习得**设计的 provider 中立 agent 应用课程 —— 目标是"会 + 懂"，不是"照着抄跑出结果"。
 独立于任何 provider(Vercel AI SDK + MCP + 本地模型)，动手全在终端。
 
+> **主线 · agent 架构的进化:`raw → harness → loop → graph`。** 每天,你都在这条演进线的某一格上再往上建一层。关键判断力:**不是越靠右越好**——能一次调用就别上 agent、能单 loop 就别上 graph。"**该用哪一格**"本身,就是这门课要练出来的能力。(全景见 [`CURRICULUM.md`](./CURRICULUM.md) 与 Chapter 00)
+
 **节奏:Day 0 定向 + Day 1–11 正课 + Day 12 Capstone · 一天一台阶(每章 ≈ 2~4 小时)· 两周冲刺。** 每天 = 一个完整子系统 + 一个有分量的 lab。
 
 **状态:** 🚧 building in public(chapters 00–12 已建，测试待学员实现)。
