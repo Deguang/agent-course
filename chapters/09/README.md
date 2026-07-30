@@ -29,7 +29,7 @@
 关键(Lab 9.1 `guardedExecute`):**拒绝或待批，也要归一成一条"与原调用配对的结果"喂回模型**——绝不静默吞掉、绝不炸穿 loop(呼应 Day 1"异常当数据")。模型看到"这个操作被拒了"，可以换个方式。
 
 ```mermaid
-flowchart TD
+flowchart LR
   T["工具调用"]:::io --> P{"裁决 allow / ask / deny"}:::model
   P -->|allow 自动放行| R["执行工具"]:::sub
   P -->|ask 人在环路| H{"人批准?"}:::model

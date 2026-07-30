@@ -42,7 +42,7 @@
 一个典型装配(按需取用，不是全都要):
 
 ```mermaid
-flowchart TD
+flowchart LR
   U[用户请求]:::io --> D5["Day 5:把完整历史投影进上下文预算"]:::sub
   D5 --> D2["Day 2:provider adapter 发给真实模型(可要结构化返回)"]:::model
   D2 --> D1["Day 1:loop 编排 — 提议 → 执行工具 → 喂回 → 直到 final"]:::model
