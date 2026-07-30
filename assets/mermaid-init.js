@@ -33,6 +33,7 @@ if (nodes.length) {
     securityLevel: "strict",
     fontFamily: cssVar("--font-body") || "serif",
     theme: "base",
+    look: "neo", // v11 精致观感(11.14+);不对味可换 "handDrawn" / "classic"
     flowchart: {
       curve: "basis",
       nodeSpacing: vertical ? 45 : 62,
