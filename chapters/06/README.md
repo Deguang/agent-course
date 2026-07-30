@@ -36,7 +36,7 @@
 - **信任边界**(概念):不受信任的扩展不该有机会跑 import 顶层代码——先过 trust gate 再加载。
 
 ```mermaid
-flowchart TD
+flowchart LR
   F["扩展 factory 注册若干工具"]:::io --> T["在暂存注册表逐个跑"]:::sub
   T --> Q{"全部成功?"}:::model
   Q -->|是| C["一次性提交到正式注册表"]:::sub

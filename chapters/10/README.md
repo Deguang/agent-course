@@ -32,7 +32,7 @@
 `runEvalSuite`:跑一批(**回归套件**)，汇总**通过率**——这就是你改代码后"有没有变差"的度量。
 
 ```mermaid
-flowchart TD
+flowchart LR
   Case["评测用例 = run + check"]:::io --> Run["run:执行 agent → 结果 / 轨迹"]:::sub
   Run -->|执行崩了| Fail["判失败 + 记 error(隔离,不拖垮套件)"]:::model
   Run -->|正常产出| Check{"check:judge 做对没有?"}:::model
