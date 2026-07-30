@@ -335,11 +335,9 @@ footer a {
 }
 .readme blockquote {
   margin: var(--space-4) 0;
-  padding: 6px 16px;
+  padding: 2px 0 2px 16px;
   border-left: 3px solid var(--accent);
   color: var(--muted);
-  background: var(--card);
-  border-radius: 0 var(--radius) var(--radius) 0;
 }
 .readme blockquote > :first-child {
   margin-top: 0;
