@@ -20,7 +20,7 @@
 **1. 拉取项目**
 
 ```bash
-git clone <本仓库地址> agent-course
+git clone https://github.com/Deguang/agent-course.git agent-course
 cd agent-course
 ```
 
@@ -90,8 +90,8 @@ npm run check       # 类型检查 + lint(脚手架健康检查)
 
 完整课程设计见 [`CURRICULUM.md`](./CURRICULUM.md)。
 
-- `chapters/00` — Day 0 · **基础全景**:模型 / token / 思维链 / 消息 / 工具 / agent / 演进 👈 从这里开始
-- **Day 1 · `chapters/01`** — **Agent Loop**:loop + 工具 + 并发 + 异常 + maxSteps
+- Day 0 · **基础全景**:模型 / token / 思维链 / 消息 / 工具 / agent / 演进 👈 从这里开始
+- Day 1 · **Agent Loop**:loop + 工具 + 并发 + 异常 + maxSteps
 - Day 2 · **接真实模型 & 可靠输出**:adapter + 真流式 + 结构化返回 + 错误归一
 - Day 3 · **常用工具集**:read/write/edit/glob/grep/bash + 三不变量
 - Day 4 · **有状态 & 持久化**:session 树 + JSONL fail-closed
