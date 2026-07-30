@@ -18,7 +18,7 @@ const SITE_CSS = await readFile("assets/site.css", "utf8");
 
 // 资源内容哈希版本号(?v=xxxx):文件一变哈希就变 → 浏览器必拉新,永久根治缓存困惑
 const VER = {};
-for (const f of ["site.js", "mermaid.min.js", "mermaid-init.js", "jinkai.css"]) {
+for (const f of ["site.js", "mermaid-init.js", "jinkai.css"]) {
   VER[f] = createHash("sha1")
     .update(await readFile(`assets/${f}`))
     .digest("hex")
@@ -239,7 +239,7 @@ function page({ base, active, title, desc, canonical, jsonld, contentHTML, hasMe
   const A = `${base}assets`;
   const home = base || "./";
   const mermaidScripts = hasMermaid
-    ? `\n<script src="${A}/${v("mermaid.min.js")}" defer></script>\n<script src="${A}/${v("mermaid-init.js")}" defer></script>`
+    ? `\n<script type="module" src="${A}/${v("mermaid-init.js")}"></script>`
     : "";
   return `<!doctype html>
 <html lang="zh-CN">
@@ -273,6 +273,7 @@ ${JSON.stringify(jsonld)}
 <script>try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}</script>
 <style>:root{color-scheme:light;background:#faf9f6}@media(prefers-color-scheme:dark){:root{color-scheme:dark;background:#16181c}}:root[data-theme="light"]{color-scheme:light;background:#faf9f6}:root[data-theme="dark"]{color-scheme:dark;background:#16181c}</style>
 <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" href="${A}/${v("jinkai.css")}" media="print" onload="this.media='all'" />
 <noscript><link rel="stylesheet" href="${A}/${v("jinkai.css")}" /></noscript>
 <style>${SITE_CSS}</style>
@@ -398,7 +399,6 @@ async function build() {
     "jinkai.css",
     "favicon.svg",
     "og.png",
-    "mermaid.min.js",
     "mermaid-init.js",
   ]) {
     await cp(`assets/${f}`, `${OUT}/assets/${f}`);
