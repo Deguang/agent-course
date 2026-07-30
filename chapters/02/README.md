@@ -66,6 +66,16 @@ agent 应用天天要**让模型返回符合 schema 的数据**(抽字段、分�
 
 > 结构化返回和 tool calling 是一回事的两面:都是"把模型输出约束成结构"。tool call 是结构化的**动作**,structured output 是结构化的**最终数据**。真实项目里 `validate` 通常用 Zod;本章用一个纯函数，保持 provider 中立。
 
+### 延伸:2026 的原生结构化输出(约束解码)
+
+上面 `generateObject` 走的是"**提示要 JSON → 累积 → parse → validate → 失败即报错**"这套**可移植兜底路**——好处是**任何 provider 都能用**,而且 `validate` + fail-closed 永远该留作安全网。但现代 API 有更硬的一招:
+
+- **结构化输出 / 约束解码(constrained decoding)**:你把 **JSON Schema 一起传给 API**,它在**每生成一个 token 后,就把"会破坏 schema 的下一个 token"全部屏蔽掉**,于是**保证语法合法、字段合规**——模型物理上吐不出你没定义的字段、也漏不了必填项。不是"提示 + 祈祷 + 事后 parse",而是**从解码层就不可能出错**。OpenAI(Structured Outputs)、Google(response schema)、Anthropic 三家都用约束解码实现。
+- **别混淆两个东西**:**JSON mode**(`response_format: json_object`)只保证"输出是段合法 JSON",不约束是哪些字段;**structured outputs** 才按你给的 schema 强制。
+- **一个诚实的坑(有论文实证)**:**过度约束格式有时会拖累模型的推理**("constraint tax")——复杂任务让它**先自由思考、最后只约束输出那一段**,别从第一个 token 就锁死。
+
+**判断力**:有原生结构化输出就优先用(更可靠、免"解析失败→重试"的循环);把你手写的 `parse + validate` 当**安全网**,并兜那些没有原生支持的 provider / 本地模型。具体字段与开关各家不同,**以官方文档为准,别凭记忆**。
+
 ## 五、错误归一
 
 真实 provider 会中途报错(限流、内容拦截、坏数据)。`accumulate` 遇到 `error` 块要**归一成一个干净的 canonical 错误抛出**——不泄露 provider 细节、不把它当成正常结果混进 history。核心的鲁棒性，就靠这种边界处的归一。
@@ -126,6 +136,6 @@ GLM_API_KEY=你的key npm run live:02
 
 ## 八、收尾
 
-- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么工具参数碎片"攒齐才 parse、按 index 分桶"?为什么把 provider 隔离在 adapter 后面?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么工具参数碎片"攒齐才 parse、按 index 分桶"?为什么把 provider 隔离在 adapter 后面?原生结构化输出(约束解码)和你手写的 `parse + validate` 各解决什么、为什么后者仍该留作安全网?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——多 provider 切换、私有能力接缝、usage/成本统计。
 - **真检验**:换一个 provider(Ollama ↔ BYOK)，确认 loop 与 canonical 类型一行没改。
