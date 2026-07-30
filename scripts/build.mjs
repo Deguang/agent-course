@@ -1,6 +1,7 @@
 // 预渲染构建:把 chapters/NN/README.md + 根 README.md 渲染成静态 HTML 页(每章一个真实路径 /NN/)。
 // 单一真源仍是各 README;此脚本在构建期(本地或 CI)把它们渲染进模板。改 README → 重跑此脚本 → 页面自动同步。
 //   用法:node scripts/build.mjs   输出到 dist/
+import { createHash } from "node:crypto";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import hljs from "highlight.js";
 import { marked } from "marked";
@@ -14,6 +15,16 @@ const DESC =
 
 // site.css 内联进每页 <head>：首帧即完整样式,不等外部 CSS → 消除翻页白闪
 const SITE_CSS = await readFile("assets/site.css", "utf8");
+
+// 资源内容哈希版本号(?v=xxxx):文件一变哈希就变 → 浏览器必拉新,永久根治缓存困惑
+const VER = {};
+for (const f of ["site.js", "mermaid.min.js", "mermaid-init.js", "jinkai.css"]) {
+  VER[f] = createHash("sha1")
+    .update(await readFile(`assets/${f}`))
+    .digest("hex")
+    .slice(0, 8);
+}
+const v = (f) => `${f}?v=${VER[f]}`;
 
 // 导航元数据(不是内容;内容全在 README)
 const CH = [
@@ -228,7 +239,7 @@ function page({ base, active, title, desc, canonical, jsonld, contentHTML, hasMe
   const A = `${base}assets`;
   const home = base || "./";
   const mermaidScripts = hasMermaid
-    ? `\n<script src="${A}/mermaid.min.js" defer></script>\n<script src="${A}/mermaid-init.js" defer></script>`
+    ? `\n<script src="${A}/${v("mermaid.min.js")}" defer></script>\n<script src="${A}/${v("mermaid-init.js")}" defer></script>`
     : "";
   return `<!doctype html>
 <html lang="zh-CN">
@@ -262,8 +273,8 @@ ${JSON.stringify(jsonld)}
 <script>try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ac-theme") || "system"); } catch (e) {}</script>
 <style>:root{color-scheme:light;background:#faf9f6}@media(prefers-color-scheme:dark){:root{color-scheme:dark;background:#16181c}}:root[data-theme="light"]{color-scheme:light;background:#faf9f6}:root[data-theme="dark"]{color-scheme:dark;background:#16181c}</style>
 <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin />
-<link rel="stylesheet" href="${A}/jinkai.css" media="print" onload="this.media='all'" />
-<noscript><link rel="stylesheet" href="${A}/jinkai.css" /></noscript>
+<link rel="stylesheet" href="${A}/${v("jinkai.css")}" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="${A}/${v("jinkai.css")}" /></noscript>
 <style>${SITE_CSS}</style>
 </head>
 <body>
@@ -284,7 +295,7 @@ ${JSON.stringify(jsonld)}
   </aside>
   <main>${contentHTML}</main>
 </div>
-<script src="${A}/site.js" defer></script>${mermaidScripts}
+<script src="${A}/${v("site.js")}" defer></script>${mermaidScripts}
 </body>
 </html>
 `;
