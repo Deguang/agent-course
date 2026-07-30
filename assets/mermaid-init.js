@@ -21,6 +21,8 @@
   };
 
   const cssVar = (k) => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  // 竖版(flowchart TD/TB)层间距要小,否则节点一多就太高;横版(LR)保持舒展
+  const isVertical = (src) => /^\s*(?:flowchart|graph)\s+(?:TD|TB)\b/i.test(src.trim());
   const isDark = () => {
     const dt = document.documentElement.getAttribute("data-theme");
     if (dt === "dark") return true;
@@ -28,17 +30,17 @@
     return matchMedia("(prefers-color-scheme: dark)").matches;
   };
 
-  const config = () => ({
+  const config = (vertical) => ({
     startOnLoad: false,
     securityLevel: "strict",
     fontFamily: cssVar("--font-body") || "serif",
     theme: "base",
     flowchart: {
       curve: "step",
-      nodeSpacing: 80,
-      rankSpacing: 100,
-      padding: 22,
-      diagramPadding: 20,
+      nodeSpacing: vertical ? 55 : 72,
+      rankSpacing: vertical ? 46 : 92,
+      padding: 20,
+      diagramPadding: 18,
       useMaxWidth: true,
     },
     themeVariables: {
@@ -74,11 +76,11 @@
       n.textContent = withClassDefs(n.dataset.src);
       n.removeAttribute("data-processed");
     }
-    window.mermaid.initialize(config());
     try {
-      await window.mermaid.run({ nodes });
-      // 让 SVG 响应式:覆盖 mermaid 的内联 px 上限,防移动端超屏溢出
+      // 逐图渲染:按方向(竖/横)套用不同间距;渲染后让 SVG 响应式
       for (const n of nodes) {
+        window.mermaid.initialize(config(isVertical(n.dataset.src)));
+        await window.mermaid.run({ nodes: [n] });
         const s = n.querySelector("svg");
         if (s) {
           s.style.maxWidth = "100%";
