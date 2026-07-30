@@ -31,7 +31,7 @@ Day 4 让 agent 能可靠地"记住一切"。但"记住一切"会撞上 Day 0 �
 - `estimateTokens` 由调用者提供，且必须是**确定性纯函数**(否则投影不可复现)。
 
 ```mermaid
-flowchart TD
+flowchart LR
   H["完整历史(持久 · 不删)"]:::io --> B["预算 = 窗口 − system − 输出预留 − 余量"]:::sub
   B --> L{"从最新组往旧,这组能装下?"}:::model
   L -->|能| K["保留该组,继续更旧"]:::sub
