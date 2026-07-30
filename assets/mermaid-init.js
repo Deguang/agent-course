@@ -34,7 +34,7 @@
     fontFamily: cssVar("--font-body") || "serif",
     theme: "base",
     flowchart: {
-      curve: "basis",
+      curve: "step",
       nodeSpacing: 80,
       rankSpacing: 100,
       padding: 22,
