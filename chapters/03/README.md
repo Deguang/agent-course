@@ -33,7 +33,18 @@ bash 最有用也最危险，至少要三根缰绳:**超时**(到点杀进程)�
 
 ---
 
-## 四、你要建的(练习)
+## 四、工具还要对模型"好用"(2026:工具设计即 prompt engineering)
+
+§二/§三 让工具对**你的系统**安全可靠。但工具还有**另一个用户:模型**——它只透过工具的 **名字 + 描述 + 参数 schema** 认识这个工具(函数体它看不见)。所以**工具的描述和签名本身就是 prompt engineering**——Anthropic《Writing effective tools for agents》把它列为提升工具最有效的手段之一。四条落地:
+
+- **描述即 prompt**:name / description / 参数名要说清"干嘛、什么时候用、参数什么意思"。描述被加载进模型上下文,直接左右它调得对不对——**含糊的描述 = 模型乱调**。
+- **返回"给人看的信息",不是原始 ID / 技术字段**:模型读 `owner: "张三"` 比读 `owner_id: "u_8f3a"` 推理得好。返回值也是上下文,要为模型的推理服务。
+- **token 效率是硬约束**:工具结果**吃的是模型的上下文预算**。会吐大量内容的工具(grep / read / glob)要内建**分页 / 范围 / 过滤 / 截断 + 合理默认值**,否则一次调用就把上下文塞爆、把注意力冲淡(呼应 §三 bash 的输出截断,以及 Day 5 的上下文预算)。参照:Claude Code 默认把单次工具结果**截到 25,000 token**。
+- **要高杠杆,别做薄包装**:一个工具应**有意义地扩展能力**,而不是把某个 API 原样裹一层。粒度对了(§一),模型才不会在一堆近义工具里犯选择困难;必要时给工具**命名空间**划清边界。
+
+> **放到行业里:MCP(Model Context Protocol)。** 你这章把工具收进本地 `ToolRegistry`——这是**单个 agent 内**的工具形态。跨 agent / 跨宿主怎么共享同一批工具?2024 年 11 月 Anthropic 开放了 **MCP**:一个厂商中立的开放协议,把"模型 ↔ 工具 / 资源"标准化成 client-server 接口(常被称作"AI 的 USB-C")。到 2026 它已是事实标准——OpenAI、Google、微软都接了,2025 年 12 月捐给 Linux 基金会下的 Agentic AI Foundation 做中立治理,Cursor / Claude Code 都能直接挂 MCP server。**本质没变**:MCP 传的还是"名字 → 带类型参数 → 结果"这套你已经手写过的东西,只是把它标准化、可跨进程共享。**你先手写过 `ToolRegistry`,才看得懂 MCP 到底在标准化什么。**
+
+## 五、你要建的(练习)
 
 打开 `tools.ts`，实现 7 个工具:
 
@@ -53,7 +64,7 @@ npm run test:03   # 12 个测试,跑在真实临时目录上(测完自动清理)
 
 从 `resolveInWorkspace` 起(其他工具依赖它)，让红色牵着走。卡住按 `定位→签名→伪代码→局部` 找 tutor。
 
-## 五、插进 loop:coding agent 雏形
+## 六、插进 loop:coding agent 雏形
 
 把每个工具**包成 Day 1 的 `Tool`**(`args → 字符串结果`)放进 `ToolRegistry`，再喂给 Day 1 的 `runAgent`——你就有了一个能真正读代码、改代码、跑测试的 **coding agent 雏形**。工具失败(文件不存在、命令非零退出)按 Day 1 的约定**归一成 error 结果喂回模型**，而不是炸掉 loop。
 
@@ -61,8 +72,8 @@ npm run test:03   # 12 个测试,跑在真实临时目录上(测完自动清理)
 
 ---
 
-## 六、收尾
+## 七、收尾
 
-- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么写文件要 temp+rename?为什么 edit 命中多次要报错而不是替换第一个?"workspace 边界是 guardrail 不是 sandbox"——这句话的边界在哪?
+- **讲回来**([`JOURNAL.md`](../../JOURNAL.md)):为什么写文件要 temp+rename?为什么 edit 命中多次要报错而不是替换第一个?"workspace 边界是 guardrail 不是 sandbox"——这句话的边界在哪?工具设计的**两个轴**(对系统安全可靠 / 对模型好用)各包含哪些做法?你手写的 `ToolRegistry` 和 MCP 是什么关系?
 - **迁移题**:见 [`TRANSFER.md`](./TRANSFER.md)——完整 glob 语法、软链接逃逸(realpath 检查)、bash 取消(AbortSignal)、把工具包成 ToolRegistry 接进 loop。
 - **真检验**:用你的工具集 + Day 1 loop + 一个(假或真)模型，让 agent 真的读一个文件并改一行，测试通过。
