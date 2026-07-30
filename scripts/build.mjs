@@ -210,7 +210,7 @@ const ACTIONS = `
 function navList(base, active) {
   const home = base || "./";
   // 顶部「序言」= 落地页(root README)
-  let out = `<a href="${home}"${active === "" ? ' class="active"' : ""}><span class="n">序</span>序言</a>`;
+  let out = `<a href="${home}"${active === "" ? ' class="active"' : ""}><span class="n">序</span>两周成为 Agent 专家</a>`;
   const seen = [];
   for (const c of CH) {
     if (!seen.includes(c.group)) {
