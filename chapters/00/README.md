@@ -102,6 +102,58 @@ agent 更强，但更慢、更贵、更难预测。**判断"该不该上 agent"�
 
 **关键判断力:不是越靠右越好。** 能 raw 就别 harness，能单 loop 就别 graph——和"能一次调用就别上 agent"同一种克制。你会在 Day 1 建 loop、Day 2 补 raw→harness、Day 7 走到 graph。(完整设计见 [`CURRICULUM.md`](../../CURRICULUM.md)。)
 
+### 另一条轴:一次请求怎么流过 harness(全课总览)
+
+上面是**时间轴**(agent 怎么进化来的)。换个视角看**数据流轴**——一次请求跑起来,数据怎么流过各层。下面这张图几乎就是**整门课的索引**:每个方块都对应后面某一天。**现在只需扫一眼有个全景**,不必看懂细节(图可点开放大)。
+
+```mermaid
+flowchart LR
+  subgraph RUN["本次运行 · 框里都是临时的(ephemeral)"]
+    IN["输入:用户问题 + system prompt + 当前对话"]:::io
+    WM["工作记忆 / Context RAM · Day 5"]:::io
+    LLM["LLM 推理"]:::model
+    TOOLS["Agentic Tools · Day 3"]:::sub
+    REPLY["Reply 回复"]:::io
+    IN --> WM --> LLM
+    LLM -->|Tool Calls / Response| TOOLS
+    TOOLS --> LLM
+    LLM -->|护栏 Guardrails · Day 9| REPLY
+  end
+
+  subgraph MEM["长期记忆 · 持久"]
+    PM["程序记忆:怎么做事 / Skills · Day 6"]:::sub
+    SEM["语义记忆:持久事实 / 画像 · Day 8"]:::sub
+    EPI["情节记忆:事件 / 历史 · Day 4"]:::sub
+    SUM["Summarizer · 更便宜的模型 · Day 5"]:::model
+  end
+  PM -->|Skill.md| WM
+  SEM -->|RAG top-k| WM
+  EPI -->|RAG 相关 + SQL 时近| WM
+  REPLY -->|保存消息| EPI
+  EPI -->|每 N 轮才整理| SUM
+  SUM -->|蒸馏成事实| SEM
+
+  subgraph OPS["LLM Ops · Day 10-11"]
+    TR["Trace:每次运行一条"]:::sub
+    EV["Eval 好不好? + Observe 健不健康?"]:::model
+    GATE{"Gate:评测过了?"}:::model
+    REL["Release:安全发布 prompt / 配置 / 工具 / top-k"]:::sub
+    TR --> EV --> GATE
+    GATE -->|没过:修复 · 重跑 · 重评| TR
+    GATE -->|过了| REL
+  end
+  REPLY --> TR
+  REL -.改进的 system prompt + 配置.-> IN
+```
+
+分三块读(每块对应后面的章):
+
+- **本次运行(临时)**:`输入 → 工作记忆 → LLM ⇄ 工具(loop)→ 护栏 → Reply`。关键一句:**运行框里的一切都是临时的(ephemeral)——跑完即弃**。工作记忆就是那块"有限、要花着用"的 Context RAM(Day 5)。
+- **长期记忆(持久)+ 整理**:三种记忆各按不同方式被取回喂进工作记忆——**程序记忆**(怎么做事 / Skills,Day 6)、**语义记忆**(持久事实 / 用户画像,RAG 语义检索,Day 8)、**情节记忆**(带时间的事件 / 历史,语义 + SQL 时近,Day 4)。Reply 先存进情节记忆;**每 N 轮**才用一个**更便宜的 summarizer 模型**把它蒸馏成语义事实(这就是 Day 5 的 compaction——不必每轮都整理)。
+- **LLM Ops(闭环)**:`Reply → Trace → Eval / Observe → Gate`。**没过**就修复、重跑、重评;**过了**才 Release(安全发布新 prompt / 配置 / 工具 / top-k),再把**改进的 prompt + 配置回流**进输入(Day 10–11)。
+
+**围住模型的这一整套(输入准备 + 记忆 + loop + 运营反馈),就叫 harness。** 注意那**两条反馈边**——经验**写回记忆**、Ops **回流配置**——正是它们让系统从"直线管道"变成会**自我改进的活系统**(呼应后面 Day 10 的 Trace → Memory → Skill、"自进化发生在模型周围的 harness,而非模型本身")。模型决定一次推理多聪明,**harness 决定这份聪明怎么变成连续、可靠、能积累的真实工作——这门课建的就是这一整圈**。
+
 ---
 
 ## 八、这门课带你去哪
